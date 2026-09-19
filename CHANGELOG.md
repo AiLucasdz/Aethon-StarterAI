@@ -1,4 +1,21 @@
-# Alterações em revisão após v0.2.1
+# Alterações
+
+## v0.2.3 — Instalação pelo Telegram e ciclo de vida
+
+- Fluxo autorizado de instalação: a pessoa envia o repositório ao agente já
+  conectado no Telegram; o agente segue `docs/instalar-pelo-telegram.md`.
+- Registro privado extensível de conexões e rotinas (`scripts/modulos.py`):
+  intenção `solicitado`/`desativado`; não executa integrações nem conecta contas.
+- Migrações versionadas da base (`scripts/migrar.py`): backup dos arquivos
+  afetados, idempotência, retomada após interrupção, reversão e conflitos
+  explícitos. Perfil 300k opcional não é aplicado a instalações existentes.
+- Templates não bloqueiam ajuda aguardando onboarding; automações opcionais
+  (agenda, tarefas, YouTube e outras) permanecem escolha do dono.
+- Testes de ciclo de vida (`tests/test_lifecycle.py`): instalação completa com
+  retomada, escolhas, rollback, recuperação de migração interrompida, rejeição
+  de caminhos privados/traversal. 9 testes passando no total.
+
+## v0.2.2 — Revisão de onboarding, configuração e privacidade
 
 - Onboarding deixa de solicitar tokens pelo Telegram e não anuncia backup sem
   sincronização/restauração implementadas. GitHub opcional registra intenção.
