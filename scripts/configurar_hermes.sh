@@ -7,7 +7,7 @@ printf '%s\n' 'Para escolher GLM ou DeepSeek via OpenRouter, use: hermes model' 
 if [[ "${1:-}" == '--perfil-leve' ]]; then
   hermes config set agent.max_turns 25
   hermes config set compression.enabled true
-  hermes config set compression.threshold_tokens 100000
+  hermes config set compression.threshold_tokens 300000
   hermes config set compression.tail_mode lean
   echo 'Perfil leve aplicado. Não altera modelo, aprovações, STT ou provedores de memória.'
 fi

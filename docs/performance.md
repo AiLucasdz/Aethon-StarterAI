@@ -4,7 +4,7 @@ KVM 1 é ponto inicial para modelo remoto por API; não há benchmark de instala
 completa desta versão em VPS limpa. Nenhum LLM é instalado localmente.
 
 - Conversas longas: `configurar_hermes.sh --perfil-leve` usa compactação nativa
-  com threshold_tokens=100000 e tail_mode=lean, e max_turns=25. Valores iniciais
+  com threshold_tokens=300000 e tail_mode=lean, e max_turns=25. Valores iniciais
   ajustáveis, não garantia de tempo de resposta. Exigem Hermes compatível.
 - Medir tokens por chamada, duração total do turno, número de ferramentas, RSS,
   erros e tempo de entrega. Cache reduz custo, mas não prova baixa latência.

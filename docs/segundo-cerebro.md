@@ -18,10 +18,19 @@ O Hermes já traz Honcho como provedor de memória nativo. Para ativar:
 
 1. Crie conta em https://app.honcho.dev e gere sua API key.
 2. Grave a chave fora do repositório:
-   `hermes honcho setup` (orienta o cadastro e salva no `~/.hermes/.env`).
-3. Verifique a conexão: `hermes honcho status` deve reportar conectado.
-4. Dê um peer ao seu usuário (como o agente deve chamar você na memória):
+   `hermes memory setup honcho` (fluxo nativo, disponível antes de ativar o
+   provedor; mantém credenciais na configuração privada do Hermes).
+3. Dê um peer ao seu usuário (como o agente deve chamar você na memória):
    `hermes honcho peer --user <nome>`.
+   Em instalação existente, confira `hermes honcho peers` e preserve a identidade
+   que já possui o histórico. Identidades do Telegram e CLI podem ser distintas;
+   não una usuários ou agentes de trabalho automaticamente.
+4. Verifique `hermes honcho status`: o peer deve estar definido e a leitura de
+   seus dados deve funcionar. A saída final `OK` sozinha não basta: algumas
+   versões também imprimem `Peer data unavailable` antes dela. Abra uma nova
+   sessão e confira a inicialização e recuperação de contexto sem esse erro.
+
+Referência: [documentação oficial do Hermes](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/honcho.md).
 
 Sem chave, a memória nativa local (MEMORY/USER) segue funcionando.
 

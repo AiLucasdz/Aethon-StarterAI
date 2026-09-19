@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Instala só os templates privados; não inicia serviços nem conecta contas."""
+import argparse
 import os
 import shlex
 import subprocess
@@ -9,7 +10,15 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parent.parent
 
 
-def main():
+def parse_args(argv):
+    parser = argparse.ArgumentParser(
+        description='Instala só os templates privados; não inicia serviços nem conecta contas.')
+    parser.parse_args(argv)
+    return parser
+
+
+def main(argv=None):
+    parse_args(sys.argv[1:] if argv is None else argv)
     home = Path(os.environ.get('HERMES_HOME', Path.home() / '.hermes')).expanduser()
     vault = Path(os.environ.get('VAULT_PATH', Path.home() / 'vault')).expanduser()
     for target in (home, vault):

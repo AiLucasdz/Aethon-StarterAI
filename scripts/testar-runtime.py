@@ -53,8 +53,12 @@ def main():
         script('iniciar.py')
         script('gateway_hook.py', '--responder', 'nome', 'Aurora')
         for key in ['dono_nome', 'dono_faz', 'dono_desejos', 'dono_limites', 'estilo',
-                    'fuso', 'bot_telegram', 'github_token']:
-            script('gateway_hook.py', '--pular', key)
+                    'fuso', 'bot_telegram', 'github_token', 'segundo_cerebro']:
+            completion = script('gateway_hook.py', '--pular', key)
+        if 'ONBOARDING_CONCLUIDO' not in completion:
+            raise RuntimeError('Onboarding não concluiu; teste interrompido.')
+        if '{{' in (home / 'SOUL.md').read_text():
+            raise RuntimeError('SOUL ainda contém placeholders após onboarding.')
         script('modulos.py', 'solicitar', 'rotina', 'regar-plantas')
         run('perfil opcional', ['bash', str(BASE / 'scripts/configurar_hermes.sh'), '--perfil-leve'])
         threshold = run('threshold efetivo', [str(hermes), 'config', 'get',

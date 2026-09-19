@@ -30,6 +30,17 @@ class Lifecycle(unittest.TestCase):
     def journals(self):
         return list((self.home / 'state/aethon-migrations').glob('*.json'))
 
+    def test_installer_arguments_never_modify_private_files(self):
+        self.home.mkdir()
+        soul = self.home / 'SOUL.md'
+        soul.write_text('Existing private identity\n')
+        before = soul.read_bytes()
+        self.run_script('iniciar.py', '--help')
+        self.run_script('iniciar.py', '--unknown-option', ok=False)
+        self.assertEqual(soul.read_bytes(), before)
+        self.assertEqual(list(self.home.iterdir()), [soul])
+        self.assertFalse((self.root / 'vault').exists())
+
     def test_full_install_resume_choices_update_rollback(self):
         self.home.mkdir()
         config = self.home / 'config.yaml'
