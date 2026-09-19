@@ -29,7 +29,8 @@ def main():
     # Não herda credenciais, perfil ativo nem variáveis de integrações da sessão.
     env = {'PATH': str(hermes.parent) + os.pathsep + os.defpath,
            'LANG': 'C.UTF-8', 'HERMES_HOME': str(home),
-           'VAULT_PATH': str(root / 'vault'), 'PYTHONIOENCODING': 'utf-8'}
+           'VAULT_PATH': str(root / 'vault'), 'PYTHONIOENCODING': 'utf-8',
+           'XDG_RUNTIME_DIR': os.environ.get('XDG_RUNTIME_DIR', f'/run/user/{os.getuid()}')}
     (home / 'config.yaml').write_text('memory:\n  provider: null\n')
     (home / 'SOUL.md').write_text('# Hermes\nIdentidade anterior fictícia.\nPersonalização a preservar.\n')
     records = []
@@ -103,6 +104,15 @@ def main():
         (root / 'resultado.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
         print(json.dumps(report, ensure_ascii=False, indent=2))
     finally:
+        receipt = home / 'state/aethon-memory/gbrain-service.json'
+        if receipt.exists():
+            service = json.loads(receipt.read_text())
+            subprocess.run(['systemctl', '--user', 'disable', '--now', service['unit']],
+                           env=env, check=True, capture_output=True, timeout=45)
+            subprocess.run(['systemctl', '--user', 'reset-failed', service['unit']],
+                           env=env, capture_output=True, timeout=45)
+            Path(service['unit_path']).unlink(missing_ok=True)
+            subprocess.run(['systemctl', '--user', 'daemon-reload'], env=env, check=True, timeout=45)
         if args.manter:
             print(f'Ambiente fictício mantido em: {root}')
         else:

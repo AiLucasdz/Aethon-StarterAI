@@ -70,6 +70,8 @@ class Memory(unittest.TestCase):
                 result = ctx.callback(user_message='Jardim plantas', platform='telegram', sender_id='123', session_id='dm')
                 self.assertIn('Regra atual.', result['context'])
                 self.assertIn('TimeoutError', result['context'])
+                self.assertIn('Informe brevemente ao usuário', result['context'])
+                self.assertIn('Não confunda falha com ausência', result['context'])
                 self.assertEqual(ctx.calls, 1)
                 with patch.object(plugin, 'direct_session', side_effect=AssertionError('I/O extra')):
                     self.assertIsNone(ctx.callback(user_message='ok', platform='telegram'))

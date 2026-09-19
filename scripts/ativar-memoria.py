@@ -11,6 +11,7 @@ import sys
 import uuid
 
 from private_state import BASE, atomic, home, locked, read, safe, write
+from gbrain_service import install as install_gbrain_service
 
 
 def configurar_honcho(binary, root, env, choice):
@@ -99,21 +100,14 @@ def main():
                 # Não herdar overrides de outro cérebro/perfil.
                 brain_env = {k: v for k, v in env.items() if not k.startswith('GBRAIN_')}
                 brain_env['GBRAIN_HOME'] = str(brain_home)
-                def gbrain(*arguments):
-                    result = subprocess.run([brain, *arguments], env=brain_env, cwd=vault,
-                                            capture_output=True, text=True, timeout=120)
-                    if result.returncode:
-                        raise RuntimeError(f'GBrain falhou em {arguments[0]}; configuração incompleta, dados preservados.')
-                if not (brain_home / '.gbrain/config.json').exists():
-                    gbrain('init', '--pglite', '--non-interactive', '--no-embedding')
-                    gbrain('config', 'set', 'search.mode', 'conservative')
-                gbrain('import', str(vault), '--no-embed')
-                server = {'command': brain, 'args': ['serve', '--surface', 'verbs'],
-                          'env': {'GBRAIN_HOME': str(brain_home)}, 'enabled': True,
-                          'connect_timeout': 60}
+                brain_env.pop('DATABASE_URL', None)
+                server = install_gbrain_service(root, vault, brain, brain_home, brain_env)
                 run('config', 'set', 'mcp_servers.gbrain', json.dumps(server))
             elif servers['gbrain'].get('enabled') is False:
                 raise RuntimeError('GBrain existente desativado: revisar o motivo antes de reativar. Configuração preservada.')
+            elif servers['gbrain'].get('command'):
+                raise RuntimeError('GBrain stdio existente preservado: migrar em janela exclusiva conforme '
+                                   'docs/gbrain-runtime.md antes de anunciar concorrência segura.')
             key = 'plugins.entries.aethon-memory.'
             for name, value in [('settings.home', str(root)), ('settings.vault', str(vault))]:
                 run('config', 'set', key + name, value)

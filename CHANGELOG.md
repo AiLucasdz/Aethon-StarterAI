@@ -1,5 +1,13 @@
 # Alterações
 
+## Não lançado — GBrain compartilhado
+
+- Instalações novas usam HTTP local autenticado, com uma unidade systemd por perfil
+  e reinício automático; gateway, CLI e rotinas compartilham o mesmo proprietário PGLite.
+- Retomada preserva a base servida; stdio existente exige migração exclusiva documentada.
+- Falha de recuperação gera warning e orientação explícita ao modelo, com fontes locais preservadas.
+- Teste nativo isolado cobre consumidores concorrentes e limpa o serviço de teste.
+
 ## Não lançado — aviso semanal sem LLM
 
 - Consulta do repositório oficial a cada sete dias pelo cron nativo; silêncio

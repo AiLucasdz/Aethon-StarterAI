@@ -79,6 +79,9 @@ GBrain passa a integrar a instalação, preservando configurações existentes.
 
 Rode `ativar-memoria.py` com o dono/perfil correto para instalar o hook e GBrain.
 Backups desse comando cobrem config.yaml, não o banco nem o vault externo.
+Se o GBrain existente usa stdio, a ativação relata pendência sem sobrescrevê-lo:
+execute a [migração exclusiva para HTTP local](gbrain-runtime.md) fora do turno
+ativo. Não anunciar atualização funcional só porque o checkout avançou.
 O symlink do plugin acompanha o checkout: atualizar o código exige recarga do
 runtime fora de turnos ativos e nova validação. Em restore para outra máquina,
 refaça essa ativação para corrigir caminhos; não reutilize diretórios do host antigo.

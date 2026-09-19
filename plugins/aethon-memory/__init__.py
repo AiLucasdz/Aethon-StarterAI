@@ -119,6 +119,11 @@ def build_context(vault, local, remote, state):
         return None
     payload = {'fontes_locais_atuais': list(local), 'gbrain': list(remote), 'gbrain_status': state}
     guidance = GUIDANCE.format(rules=vault / 'AGENTS.md')
+    if state not in {'ok', 'local_only'}:
+        guidance += (' A consulta ao GBrain falhou neste turno. Informe brevemente ao usuário '
+                     'que essa memória está indisponível e continue com as fontes acessíveis; '
+                     'identifique o que não pôde verificar. Não confunda falha com ausência '
+                     'de registro nem confirme gravação sem recibo.')
     while True:
         context = guidance + '\n<aethon_memory_data>\n' + json.dumps(
             payload, ensure_ascii=False, separators=(',', ':')) + '\n</aethon_memory_data>'
@@ -171,6 +176,7 @@ def register(ctx):
                 remote, state = remote_passages(unpack(reply), query), 'ok'
             except Exception as exc:
                 state = type(exc).__name__
+                LOG.warning('aethon_memory GBrain indisponível: %s; usando fontes locais', state)
         context = build_context(vault, local, remote, state)
         if context is None:
             return None

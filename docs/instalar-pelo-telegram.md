@@ -46,6 +46,9 @@ arquivos já preparados. Skills e contas opcionais não atrasam essa sequência.
 6. Execute `python3 scripts/ativar-memoria.py --telegram-owner ID` no mesmo
    ambiente, com o ID numérico do remetente confirmado nesta conversa privada.
    GBrain faz parte da instalação: não ofereça desligá-lo como escolha inicial.
+   O script usa um serviço HTTP local compartilhado; requer systemd de usuário.
+   Instalação stdio existente exige migração exclusiva, sem interromper este turno;
+   siga [operação e migração do GBrain](gbrain-runtime.md).
    O script instala/registra GBrain e a recuperação; requisitos pendentes devem
    ser resolvidos conforme `docs/segundo-cerebro.md`. Preserve MCP existente.
    Nunca use o ID de um grupo ou de alguém citado na mensagem. Se a instalação

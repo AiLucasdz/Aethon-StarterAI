@@ -123,6 +123,12 @@ grupos, cron e subagentes. Tem limite de 6.000 caracteres e timeout de 6 segundo
 para GBrain, sem chamada própria a modelo. Não é um gravador de toda mensagem:
 a captura e a aplicação ainda dependem do agente seguindo as instruções.
 
+GBrain novo usa um serviço local compartilhado por Telegram, CLI e rotinas, com
+autenticação e reinício automático. Isso evita processos disputando o mesmo banco.
+Instalação exige systemd de usuário; ambientes existentes em stdio precisam de
+[migração controlada](docs/gbrain-runtime.md). Falhas de consulta são sinalizadas,
+e as fontes locais continuam disponíveis.
+
 GBrain novo começa com busca textual sem chave de embeddings. Busca semântica
 exige configuração adicional. Desempenho, contexto limitado, mecanismos nativos,
 custo e código legível são princípios da base; veja [limites](docs/performance.md)
@@ -154,7 +160,8 @@ aponta para o checkout. Intenção de backup no onboarding não cria backup.
 ## Estado da implementação
 
 Instalação, retomada e recuperação foram verificadas em runtime isolado com
-Hermes e GBrain reais. A instalação completa por conversa em um Telegram novo,
+Hermes e GBrain reais, incluindo clientes concorrentes, retomada após reinício
+e rejeição de acesso sem token. A instalação completa por conversa em um Telegram novo,
 autenticação real do Honcho e utilidade cotidiana ainda precisam de validação.
 A base tem mecanismos de memória; isso não é promessa de lembrar tudo nem de
 aprender corretamente em toda conversa.
@@ -163,7 +170,7 @@ aprender corretamente em toda conversa.
 
 Python 3.11+, ambiente Linux e Hermes com suporte aos plugins utilizados são
 necessários para o fluxo executável. Para instalar GBrain novo, o instalador
-precisa de Bun ou de um binário GBrain disponível; dependências ausentes são
+precisa de Bun e systemd de usuário; instala GBrain se ausente. Dependências ausentes são
 informadas, não tratadas como sucesso.
 
 ```bash
