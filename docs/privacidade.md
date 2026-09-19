@@ -1,36 +1,21 @@
+# Privacidade
 
-# Privacidade — o que fica no seu servidor e o que sai dele
+Nunca colocar dados de instalação no checkout público. Revisar arquivos,
+metadados Git, histórico, tags, releases, artefatos e logs antes de publicar.
+.gitignore e busca de padrões ajudam, mas não provam ausência de dados pessoais.
+Um histórico reescrito não remove cópias, forks ou caches de terceiros; em caso
+de credencial exposta, revogar e substituir a credencial é necessário.
 
-## Regra de ouro
+Arquivos privados permanecem no servidor por padrão. Conteúdo do SOUL, memórias,
+notas recuperadas e conversa pode entrar no contexto enviado ao modelo via
+OpenRouter. Mensagens passam pelo Telegram. Honcho, embeddings e outras conexões
+podem receber dados quando configurados. Não confundir localização do arquivo
+com local de processamento. Backup remoto privado também é uma cópia externa.
 
-**Sua instalação é sua.** Este repositório público não contém e nunca conterá
-dados dos usuários. E sua instalação privada nunca deve virar pública.
+Tokens: somente pelo fluxo seguro do serviço no terminal/OAuth; nunca no chat,
+argumentos de comandos ou Git. O onboarding registra intenção de backup, não
+coleta token nem configura armazenamento global de credenciais.
 
-## O que sai do seu servidor
-
-| Dado | Vai para | Quando |
-|---|---|---|
-| Mensagens suas | Provedor do modelo (OpenRouter) | a cada conversa |
-| Suas mensagens | Telegram | sempre (é o canal) |
-| Consultas de web | sites consultados | quando o agente pesquisa |
-
-## O que NÃO sai do seu servidor
-
-- Suas memórias e notas (Markdown local)
-- Identidade do soul (seu nome, seus limites)
-- Tokens e credenciais de conexões
-- Histórico de conversas do Telegram
-
-## Antes de forkar ou publicar qualquer variação
-
-A revisão de privacidade deve abranger: conteúdo visível, histórico do git,
-arquivos ocultos, artefatos compilados e logs. **.gitignore não basta** —
-dados podem estar no histórico de commits. Se seu fork derivou de uma
-instalação pessoal, o caminho seguro é começar de um checkout limpo do
-template, não de dentro da instalação.
-
-## Credenciais
-
-- Nunca em chat do Telegram. Sempre OAuth ou entrada segura no servidor.
-- Nunca em arquivos versionados. `.env` local + variáveis de ambiente.
-- Revisão anual (ou por suspeita) de quais serviços têm acesso a quê.
+Releases devem passar por revisão humana e varredura de padrões, incluindo
+identificadores conhecidos mantidos em lista PRIVADA, nunca embutidos no scanner
+público. Não publicar achados que reproduzam os dados removidos.

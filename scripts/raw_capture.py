@@ -21,16 +21,12 @@ def main() -> int:
     p.add_argument("--message-id", default=None)
     args = p.parse_args()
 
-    if args.message_id and INBOX.exists() and args.message_id in INBOX.read_text():
-        print(f"ja capturado: {args.message_id}")
-        return 0
 
     INBOX.parent.mkdir(parents=True, exist_ok=True)
     bloco = f"\n## {date.today().isoformat()} — origem: {args.origem}\n\n{args.texto}\n"
-    if args.message_id:
-        bloco += f"\n<!-- id: {args.message_id} -->\n"
-    with INBOX.open("a") as f:
-        f.write(bloco)
+
+    from capture_store import append_once
+    append_once(INBOX, bloco, args.message_id)
     print(INBOX)
     return 0
 

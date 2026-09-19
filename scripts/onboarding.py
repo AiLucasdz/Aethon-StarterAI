@@ -17,8 +17,6 @@ import argparse
 import json
 import os
 import sys
-import urllib.error
-import urllib.request
 from datetime import date
 from pathlib import Path
 
@@ -48,13 +46,9 @@ BOT_MSG = ("Última coisa: seu bot no Telegram pode ter esse mesmo nome.\n"
 
 # Backup GitHub: etapa separada, sempre opcional.
 GITHUB_MSG = (
-    "Quer que eu faça backup do seu vault num repositório PRIVADO do seu GitHub?\n"
-    "Se sim, me manda um token de acesso:\n"
-    "1. https://github.com/settings/tokens/new\n"
-    "2. Marque só 'repo'\n"
-    "3. Gere e cole aqui\n"
-    "⚠️ O repo que eu criar será PRIVADO (só você vê) e o token fica salvo\n"
-    "só neste servidor, com permissão restrita. Ou digite 'pular'."
+    "Quer configurar backup privado depois? Responda 'sim' ou 'pular'. "
+    "Não envie tokens aqui. A autenticação será feita no terminal com o "
+    "fluxo seguro do GitHub. Esta escolha não cria repositório nem ativa backup."
 )
 
 
@@ -66,7 +60,17 @@ def carregar_estado() -> dict:
 
 def salvar_estado(st: dict) -> None:
     STATE.parent.mkdir(parents=True, exist_ok=True)
-    STATE.write_text(json.dumps(st, ensure_ascii=False, indent=2))
+    import tempfile
+    fd, name = tempfile.mkstemp(dir=STATE.parent)
+    try:
+        with os.fdopen(fd, "w") as stream:
+            json.dump(st, stream, ensure_ascii=False, indent=2)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(name, STATE)
+    finally:
+        if os.path.exists(name):
+            os.unlink(name)
 
 
 def proxima_pendente(st: dict):
@@ -88,66 +92,15 @@ def aplicar_resposta(st: dict, chave: str, resposta: str) -> dict:
     return st
 
 
-def validar_github_token(token: str):
-    """Retorna (login, erro). Nao imprime o token."""
-    req = urllib.request.Request(
-        "https://api.github.com/user",
-        headers={"Authorization": f"Bearer {token}",
-                 "Accept": "application/vnd.github+json", "User-Agent": "aethon"})
-    try:
-        with urllib.request.urlopen(req, timeout=15) as r:
-            d = json.loads(r.read())
-            return d.get("login"), None
-    except Exception as e:
-        return None, str(e)
-
-
-def salvar_token_github(st: dict, token: str) -> tuple:
-    """Valida, salva com permissao 600 FORA de qualquer repo e cria o repo privado."""
-    login, err = validar_github_token(token)
-    if err:
-        return False, f"token inválido ({err[:80]}). Tenta de novo ou digite 'pular'."
-
-    creds = Path.home() / ".git-credentials"
-    linha = f"https://{login}:{token}@github.com"
-    existente = creds.read_text() if creds.exists() else ""
-    github_antiga = [l for l in existente.splitlines() if "github.com" in l]
-    if github_antiga:
-        existente = existente.replace(github_antiga[0], linha)
-    else:
-        existente = (existente.rstrip("\n") + "\n" + linha) if existente else linha + "\n"
-    creds.write_text(existente)
-    creds.chmod(0o600)
-    os.system("git config --global credential.helper store")
-
-    nome_repo = "meu-vault-privado"
-    body = json.dumps({"name": nome_repo, "private": True,
-                       "description": f"Backup do vault de {login} (Aethon)"}).encode()
-    req = urllib.request.Request(
-        "https://api.github.com/user/repos", data=body, method="POST",
-        headers={"Authorization": f"Bearer {token}",
-                 "Accept": "application/vnd.github+json", "User-Agent": "aethon"})
-    try:
-        with urllib.request.urlopen(req, timeout=15) as r:
-            d = json.loads(r.read())
-            url = d.get("html_url", "")
-    except urllib.error.HTTPError as e:
-        if e.code == 422:
-            url = f"https://github.com/{login}/{nome_repo} (ja existia)"
-        else:
-            return False, f"token OK ({login}) mas falhei ao criar o repo: {e.code}"
-    st["github_login"] = login
-    st["github_repo"] = url
-    return True, f"✓ conectado como {login}. Repo privado: {url}"
-
-
 def preencher_artefatos(st: dict) -> None:
     """Onboarding concluido: grava soul e perfil no vault com as respostas."""
     soul_tpl = HERMES_HOME / "SOUL.md"
+    if soul_tpl.is_symlink():
+        raise ValueError("SOUL é symlink")
     if soul_tpl.exists():
         texto = soul_tpl.read_text()
         for k, v in {
-            "{{NOME_DO_AGENTE}}": st.get("nome", "assistente"),
+            "{{NOME_DO_AGENTE}}": "assistente" if st.get("nome") == "(pulado)" else st.get("nome", "assistente"),
             "{{NOME_DO_DONO}}": st.get("dono_nome", ""),
             "{{O_QUE_FAZ}}": st.get("dono_faz", ""),
             "{{DESEJOS_ATE_3}}": st.get("dono_desejos", ""),
@@ -159,9 +112,22 @@ def preencher_artefatos(st: dict) -> None:
             "{{CONEXOES}}": "nenhuma ativada ainda — me peça quando quiser",
         }.items():
             texto = texto.replace(k, v)
+        import re
+        texto = re.sub(r"\n<!-- onboarding-aethon -->.*?<!-- /onboarding-aethon -->\n?", "\n", texto, flags=re.S)
         soul_tpl.write_text(texto)
+        soul_tpl.chmod(0o600)
+
+    rules = VAULT / "AGENTS.md"
+    if rules.is_symlink():
+        raise ValueError("AGENTS privado é symlink")
+    if rules.exists():
+        text = rules.read_text().replace("{{NOME_DO_AGENTE}}", st.get("nome", "assistente"))
+        rules.write_text(text.replace("{{NOME_DO_DONO}}", st.get("dono_nome", "")))
+        rules.chmod(0o600)
 
     perfil = VAULT / "01_IDENTIDADE" / "perfil.md"
+    if perfil.is_symlink():
+        raise ValueError("Perfil é symlink")
     if perfil.exists():
         texto = perfil.read_text()
         for k, v in {
@@ -173,6 +139,7 @@ def preencher_artefatos(st: dict) -> None:
         }.items():
             texto = texto.replace(k, v)
         perfil.write_text(texto)
+        perfil.chmod(0o600)
 
 
 def main() -> int:
@@ -182,6 +149,10 @@ def main() -> int:
     p.add_argument("--pular", metavar="CHAVE")
     args = p.parse_args()
 
+    import re
+    if args.responder and re.search(r"(?:ghp_|github_pat_|sk-or-v1-)[A-Za-z0-9_\-]{12,}", args.responder[1]):
+        print("ERRO: credencial recusada; utilize autenticação no terminal.")
+        return 1
     st = carregar_estado()
 
     if args.iniciar and not st:
@@ -190,7 +161,7 @@ def main() -> int:
 
     if args.pular:
         prox, _ = proxima_pendente(st)
-        if args.pular == "github_token":
+        if args.pular == "github_token" and args.pular == prox:
             st["github_token"] = "(pulado)"
             st["github_login"] = "(sem backup)"
         elif args.pular == prox:
@@ -207,26 +178,34 @@ def main() -> int:
             print(f"chave invalida: {chave}")
             return 1
 
+        prox, _ = proxima_pendente(st)
+        if chave != prox:
+            print(f"ERRO: responda a pergunta atual ({prox})")
+            return 1
         if chave == "github_token":
-            if resposta.strip().lower() in PULAR:
-                st = aplicar_resposta(st, "github_token", "(pulado)")
-                salvar_estado(st)
-            else:
-                ok, msg = salvar_token_github(st, resposta.strip())
-                if not ok:
-                    print(f"ERRO:{msg}")
-                    print(GITHUB_MSG)
-                    return 0
-                st["github_token"] = f"salvo ({st.get('github_login')})"
-                salvar_estado(st)
+            answer = resposta.strip().lower()
+            if answer not in PULAR | {"sim", "yes"}:
+                print("ERRO: use sim ou pular. Não envie credenciais.")
+                return 1
+            st[chave] = "solicitado" if answer in {"sim", "yes"} else "(pulado)"
         else:
-            st = aplicar_resposta(st, chave, resposta)
-            salvar_estado(st)
+            if chave == "fuso" and resposta.strip().lower() not in PULAR:
+                from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+                try:
+                    ZoneInfo(resposta.strip())
+                except (ValueError, ZoneInfoNotFoundError):
+                    print("ERRO: fuso inválido; exemplo: America/Sao_Paulo")
+                    return 1
+            st = aplicar_resposta(st, chave, "(pulado)" if resposta.strip().lower() in PULAR else resposta)
+        salvar_estado(st)
 
     chave, pergunta = proxima_pendente(st)
     if chave is None:
-        preencher_artefatos(st)
-        backup = st.get("github_repo", "não configurado")
+        if not st.get("_concluido"):
+            preencher_artefatos(st)
+            st["_concluido"] = True
+            salvar_estado(st)
+        backup = "não configurado (solicitação anotada)" if st.get("github_token") == "solicitado" else "não configurado"
         print("ONBOARDING_CONCLUIDO")
         print(f"Pronto, {st['nome']} está no ar! 🚀")
         print(f"Backup do vault: {backup}")
@@ -241,4 +220,11 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    import fcntl
+    STATE.parent.mkdir(parents=True, exist_ok=True)
+    if STATE.is_symlink() or any(p.is_symlink() for p in STATE.parents):
+        raise SystemExit("Destino de estado com symlink; recusado")
+    fd = os.open(STATE.with_suffix('.lock'), os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(fd, 'w') as guard:
+        fcntl.flock(guard, fcntl.LOCK_EX)
+        raise SystemExit(main())

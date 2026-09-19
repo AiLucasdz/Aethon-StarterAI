@@ -25,20 +25,16 @@ def main() -> int:
     p.add_argument("--message-id", default=None)
     args = p.parse_args()
 
-    dia = args.data or date.today().isoformat()
+    dia = date.fromisoformat(args.data).isoformat() if args.data else date.today().isoformat()
     VAULT.mkdir(parents=True, exist_ok=True)
     arq = VAULT / "07_DIARIO" / f"{dia}.md"
     arq.parent.mkdir(parents=True, exist_ok=True)
 
-    if args.message_id and arq.exists() and args.message_id in arq.read_text():
-        print(f"ja registrado: {args.message_id}")
-        return 0
 
     bloco = f"\n## {args.tipo} — origem: {args.origem}\n\n{args.texto}\n"
-    if args.message_id:
-        bloco += f"\n<!-- id: {args.message_id} -->\n"
-    with arq.open("a") as f:
-        f.write(bloco)
+
+    from capture_store import append_once
+    append_once(arq, bloco, args.message_id)
     print(arq)
     return 0
 

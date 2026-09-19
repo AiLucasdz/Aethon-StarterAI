@@ -15,14 +15,10 @@
 
 ## Depois do vídeo
 
-Quando seu bot responder "oi" no Telegram, o **onboarding do agente começa
-sozinho** — ele vai pedir o nome dele e quem é você:
-ver [onboarding.md](onboarding.md).
-
-No fim, o onboarding oferece (opcional, pode pular) o **backup do seu vault
-num repositório privado do seu GitHub** — para isso ele vai pedir um token de
-acesso com escopo `repo`. O token fica só no seu servidor (permissão 600) e o
-repositório criado é privado.
+Link do vídeo ainda pendente. Com Hermes e bot já configurados, execute
+`bash scripts/iniciar.sh` usando os caminhos privados da instalação. Veja
+[onboarding.md](onboarding.md) para carregamento do SOUL e limites da integração.
+O onboarding não coleta token GitHub; registra somente interesse em backup.
 
 ## Referência escrita (oficial)
 
