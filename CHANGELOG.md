@@ -1,5 +1,15 @@
 # Alterações
 
+## v0.3.0 — Segundo cérebro (GBrain + Honcho)
+
+- GBrain (MIT, github:garrytan/gbrain) e Honcho como módulos disponíveis;
+  guia completo em docs/segundo-cerebro.md. Desligados por padrão.
+- Onboarding pergunta "segundo cérebro" (sim/pular); "sim" registra intenção
+  de gbrain e honcho no registro de conexões — não instala nada.
+- Instrução de sistema ganha Captura e ancoragem (vault antes de indexar,
+  --entity, --kind) e Ressurgimento, ativas somente com GBrain conectado.
+- Testes ajustados para o fluxo com a pergunta nova; 9 passando.
+
 ## v0.2.3 — Instalação pelo Telegram e ciclo de vida
 
 - Fluxo autorizado de instalação: a pessoa envia o repositório ao agente já
