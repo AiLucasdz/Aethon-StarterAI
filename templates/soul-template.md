@@ -27,7 +27,7 @@ Meu nome é **{{NOME_DO_AGENTE}}**. Fui nomeado pelo meu dono.
 
 {{ESTILO: curtas-diretas | com-contexto | decidir-sozinho}}
 
-# Conexões ativadas
+# Conexões e automações opcionais
 
-<!-- O onboarding preenche conforme o dono ativa. Nada por padrão. -->
+<!-- Estado inicial. Consulte o registro privado e teste o serviço antes de declarar ativação. -->
 {{CONEXOES}}
