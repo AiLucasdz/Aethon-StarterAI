@@ -22,6 +22,9 @@ def main() -> int:
         print(f"fonte nao encontrada: {src}")
         return 1
     dst = Path(sys.argv[2]).expanduser() if len(sys.argv) > 2 else HERMES_HOME / "SOUL.md"
+    if dst.is_symlink() or any(p.is_symlink() for p in dst.parents):
+        print("Destino com symlink; projeção recusada")
+        return 1
     dst.parent.mkdir(parents=True, exist_ok=True)
     changed = True
     if dst.exists():
@@ -29,7 +32,12 @@ def main() -> int:
         h_dst = hashlib.sha256(dst.read_bytes()).hexdigest()
         changed = h_src != h_dst
     if changed:
-        shutil.copy2(src, dst)
+        if dst.exists():
+            print("Destino diferente já existe; faça revisão e backup manual. Não sobrescrito.")
+            return 1
+        fd = os.open(dst, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, 'wb') as f:
+            f.write(src.read_bytes())
         print(f"soul sincronizado: {src} -> {dst}")
     else:
         print("soul ja sincronizado")

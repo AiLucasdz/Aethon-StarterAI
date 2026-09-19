@@ -1,4 +1,4 @@
-# {{NOME_DO_AGENTE}} — seu agente pessoal no Telegram
+# Aethon-StarterAI — base para seu agente pessoal
 
 > Template público. Nenhum dado pessoal aqui — a configuração privada da sua
 > instalação vive fora deste repositório (ver `docs/privacidade.md`).
@@ -10,6 +10,8 @@ Uma base replicável de agente pessoal, construída sobre o
 VPS, conecta seu Telegram, escolhe o nome do seu agente e ativa gradualmente as
 conexões que quiser.
 
+**Estado: versão em revisão, sem validação completa em VPS/Telegram.** Veja [limites e desempenho](docs/performance.md).
+
 **Seu agente, seu nome.** Durante o onboarding no Telegram, a primeira coisa
 que o agente vai te pedir é:
 
@@ -17,7 +19,7 @@ que o agente vai te pedir é:
 2. **Quem é você** — nome, o que faz, o que o agente pode e não pode fazer por você.
 
 Essas informações moldam a personalidade do agente (arquivo `soul` dele) e são
-salvas **apenas no seu servidor**, nunca publicadas.
+gravadas nos arquivos privados da sua instalação. Telegram, modelo e integrações podem processar as mensagens; armazenamento local não significa processamento exclusivamente local.
 
 ## Como funciona (visão geral)
 
@@ -32,15 +34,16 @@ Você (Telegram) ↔ Hermes (VPS) ↔ Modelo de IA (OpenRouter: GLM ou DeepSeek)
 ## Instalação
 
 **A instalação (VPS + Hermes + Telegram) é ensinada em vídeo pelo criador.**
-Assista ao vídeo e, quando seu bot responder "oi" no Telegram, o onboarding
-começa sozinho: **o agente pergunta o nome dele e quem é você.**
+O link do vídeo ainda está pendente. Após instalar Hermes e parear o bot, execute
+`bash scripts/iniciar.sh`. O onboarding é orientado por uma instrução no SOUL;
+a validação real desse fluxo no Telegram ainda está pendente.
 
 - Link de VPS recomendada: [Hostinger, código de indicação](https://www.hostinger.com/br?REFERRALCODE=O23ELLUCA0ZD)
 - Visão geral escrita: [docs/instalacao.md](docs/instalacao.md)
 - Conexões opcionais: [docs/catalogo-modulos.md](docs/catalogo-modulos.md)
 - Memória (vault): [docs/vault.md](docs/vault.md) — Obsidian é opcional; o vault é só Markdown no seu servidor
 
-## Conexões opcionais
+## Conexões opcionais — adaptadores ainda pendentes
 
 Nada é ativado por padrão. Após o onboarding, o agente te pergunta o que você
 quer ativar, explicando custo, benefício e requisitos de cada uma:
@@ -51,7 +54,7 @@ quer ativar, explicando custo, benefício e requisitos de cada uma:
 | Gmail | Leitura e envio de e-mails (com confirmação) |
 | YouTube | Análise do seu próprio canal |
 | Reuniões (Fathom) | Resumos e acompanhamento de decisões |
-| X/Twitter | Postagem e monitoramento |
+| X/Twitter | Pesquisa e resumos, quando implementado e autorizado |
 
 Credenciais nunca são pedidas no chat — sempre por entrada segura ou OAuth.
 

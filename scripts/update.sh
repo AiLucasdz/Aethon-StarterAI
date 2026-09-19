@@ -1,37 +1,29 @@
 #!/usr/bin/env bash
-# Atualiza a camada BASE do template preservando personalização e dados.
-# Uso: ./scripts/update.sh   (rodar a partir da raiz do seu fork)
+# Atualiza somente o checkout, por fast-forward; não migra dados privados.
 set -euo pipefail
-
-echo "== Backup obrigatório =="
-TS=$(date +%F-%H%M)
-tar czf ~/backup-hermes-$TS.tar.gz ~/.hermes --exclude='.hermes/hermes-agent' 2>/dev/null \
-  || echo "(sem ~/.hermes ainda? backup pulado — primeira instalação)"
-echo "backup: ~/backup-hermes-$TS.tar.gz"
-
-echo "== Atualizando base =="
-# O git pull só trouxa mudanças da camada base. Preservados por design:
-#   - soul/config/memórias vivem FORA do checkout (em ~/.hermes e dados do dono)
-#   - nada neste repo aponta para dados reais de usuário
-if [ -n "$(git status --porcelain)" ]; then
-  echo "AVISO: há mudanças locais na camada base (você modificou o template)."
-  echo "O migrador vai parar para você decidir cada conflito."
-  git stash list >/dev/null
-  git diff --stat
+cd "$(dirname "$0")/.."
+REMOTE="${1:-upstream}"
+BRANCH="${2:-main}"
+git rev-parse --verify HEAD >/dev/null
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo 'Checkout com alterações locais: resolva antes de atualizar.' >&2
   exit 1
 fi
-
-echo "== Verificação de privacidade =="
-# Procura padrões de dados reais que não deveriam estar aqui
-BANNED="${BANNED_NAMES:-}"  # nomes pessoais separados por | ; defina no seu fork
-if [ -n "$BANNED" ]; then
-  if git grep -nIiE "($BANNED)" -- . 2>/dev/null | grep -v 'docs/privacidade.md' | head -5; then
-    echo "FALHA: possíveis dados pessoais no repositório. Corrija antes de publicar."
-    exit 1
-  fi
-  echo "verificação de privacidade OK (BANNED_NAMES)"
-else
-  echo "BANNED_NAMES não definido — verificação de privacidade pulada"
+git remote get-url "$REMOTE" >/dev/null
+OLD=$(git rev-parse HEAD)
+git fetch "$REMOTE" "$BRANCH"
+NEW=$(git rev-parse FETCH_HEAD)
+if ! git merge-base --is-ancestor "$OLD" "$NEW"; then
+  echo 'Fork divergente: revisão/merge manual necessário. Nenhum arquivo alterado.' >&2
+  exit 1
 fi
-
-echo "OK. Base atualizada; personalização e dados preservados."
+if [[ "$OLD" == "$NEW" ]]; then echo 'Base já atualizada.'; exit 0; fi
+umask 077
+BACKUP_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/aethon/base-backups"
+mkdir -p "$BACKUP_DIR"
+BACKUP=$(mktemp "$BACKUP_DIR/base-XXXXXX.bundle")
+git bundle create "$BACKUP" --all
+git bundle verify "$BACKUP" >/dev/null
+git merge --ff-only "$NEW"
+printf 'Base atualizada. Revisão anterior: %s\nBackup do Git: %s\n' "$OLD" "$BACKUP"
+echo 'Dados privados não foram migrados nem copiados; este backup é apenas do código.'

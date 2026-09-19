@@ -1,40 +1,28 @@
+# Catálogo e estado de implementação
 
-# Catálogo de módulos (conexões opcionais)
+Conectar conta e ativar rotina são escolhas separadas. Nenhuma conta externa ou
+rotina é ativada pelo inicializador. Não prometer custo zero: plano externo,
+embeddings e chamadas ao modelo podem ser cobrados.
 
-> Nada ativado por padrão. O dono escolhe no Telegram; cada ativação é
-> **testada de verdade** antes de o agente dizer que funciona.
-> Conectar conta ≠ ativar rotina: frequência/horário/destino são perguntas separadas.
+| Componente | Estado desta versão |
+|---|---|
+| Vault Markdown | Estrutura criada sem sobrescrever arquivos existentes |
+| Onboarding | Script local + instrução no SOUL; validação Telegram real pendente |
+| Memória nativa MEMORY/USER | Recurso do Hermes; conferir configuração efetiva |
+| Honcho | Planejado/opcional; requer configuração própria e validação |
+| GBrain | Planejado/opcional; não instalado por este template |
+| Agenda/Tasks/Gmail | Planejado/opcional; conexão OAuth e testes não implementados |
+| YouTube | Planejado/opcional; não herda canal ou OAuth de outro usuário |
+| Fathom | Planejado/opcional; sem cron/timer instalado |
+| X | Planejado/opcional para pesquisa/resumos; publicação não incluída |
+| Backup privado | Interesse registrado; sincronização/restauração não implementadas |
 
-## Base (sempre incluída)
+Honcho fornece contexto conversacional e representações; GBrain organiza,
+relaciona e recupera conhecimento com fontes; memória nativa mantém notas curtas;
+vault guarda registros duráveis. Não são equivalentes nem possuem sincronização
+automática comprovada. Seus dados podem ser processados pelos serviços externos
+configurados e pelo modelo, mesmo quando os arquivos ficam no servidor.
 
-| Módulo | Função | Requisito |
-|---|---|---|
-| Conversa Telegram | canal principal | bot já conectado no vídeo de instalação |
-| Memória local (Markdown/vault) | notas duráveis do dono — a fonte de verdade | nada extra |
-| Memória de recuperação (índice vetorial) | achar por assunto/entidade | roda local |
-| Contexto relacional (Honcho) | como o dono gosta de conversar, padrões de sessão | chave Honcho (nível gratuito cobre) |
-| Índice de conhecimento (GBrain) | recuperação por entidade sobre o vault | roda local |
-
-## Opcionais
-
-| Módulo | Para que serve | Requisito | Custo extra |
-|---|---|---|---|
-| **Agenda Google** | compromissos, planejamento diário, briefing matinal | OAuth Google | 0 |
-| **Google Tasks** | lista de tarefas do dono | OAuth Google | 0 |
-| **Gmail** | ler/separar/enviar e-mails (envio exige confirmação) | OAuth Google | 0 |
-| **YouTube (próprio canal)** | analytics do canal do dono | OAuth Google | 0 |
-| **Reuniões (Fathom)** | resumo e compromissos de reuniões gravadas | conta Fathom | plano Fathom |
-| **X/Twitter** | postar e monitorar | chave API própria | API paga |
-| **Transcrição de vídeo** | transcrever YouTube de terceiros | serviço externo | 0 (com limites) |
-
-## Estados possíveis
-
-- `off` (padrão) — código não executa, nem aparece no onboarding como ativo
-- `conectado` — credenciais OK, nenhuma rotina rodando
-- `ativo` — pelo menos uma rotina escolhida pelo dono, testada
-
-## Regra do onboarding
-
-Ao ativar qualquer módulo, o agente explica: utilidade, requisitos, custo e
-quais dados saem do servidor. Só depois pede a conexão. E pergunta em seguida
-quais rotinas (se alguma) o dono quer.
+Estados futuros por módulo: off, solicitado, conectando, conectado, erro; rotinas
+terão estado próprio. Só conexão autenticada e consulta real permitem declarar
+conectado. Só uma execução e entrega verificadas permitem declarar rotina ativa.

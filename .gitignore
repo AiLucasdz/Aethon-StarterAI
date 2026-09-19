@@ -13,3 +13,11 @@ backup-*
 # pessoal
 soul-final.md
 usuario-real/
+
+__pycache__/
+*.pyc
+*.db
+*.db-*
+*.bundle
+*.tar.gz
+.git-credentials

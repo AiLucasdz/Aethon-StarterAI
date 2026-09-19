@@ -1,35 +1,18 @@
+# Configuração privada
 
-# Contrato de configuração privada
+Base pública: código, templates vazios e documentação. HERMES_HOME (padrão
+~/.hermes) e VAULT_PATH (padrão ~/vault) ficam fora do checkout. Os scripts de
+inicialização gravam nesses destinos privados com permissões restritas.
 
-> Define onde cada coisa viva na instalação do dono. A base pública nunca
-> grava nada aqui; o agente e os scripts leem, nunca escrevem para fora.
+SOUL, perfil e onboarding contêm dados pessoais. .env, tokens, bancos, histórico,
+logs, capturas e backups nunca entram no Git público. Backup privado exige escolha
+separada e restauração validada. Armazenamento local não significa processamento
+exclusivamente local: Telegram, provedor do modelo e integrações recebem dados
+conforme uso. Nunca prometer que informações não saem do servidor.
 
-## Locais (padrão da instalação)
-
-| Camada | Caminho no servidor | Versionado? |
-|---|---|---|
-| Motor (runtime Hermes) | `~/.hermes/hermes-agent/` | não — instalado por mecanismo oficial |
-| **Soul do agente** | `~/.hermes/SOUL.md` | **nunca** (dados do dono) |
-| Config local (modelo, tokens, fuso) | `~/.hermes/config.yaml` + `.env` | **nunca** |
-| Credencial GitHub (backup do vault) | `~/.git-credentials` (perm. 600) | **nunca** |
-| Memórias e notas do dono | pasta de vault do dono | escolha do dono (repositório privado dele) |
-| Estado, logs, backups | `~/.hermes/state/`, logs do systemd | **nunca** |
-
-## Regras do contrato
-
-1. **A base pública não sabe nada sobre o dono.** Todo dado pessoal mora nos
-   caminhos acima, fora do checkout.
-2. **Atualização da base só toca o checkout público.** Os caminhos acima são
-   intocados por design (ver `atualizacoes.md`).
-3. **Placeholders `{{...}}`** nos templates são preenchidos uma única vez,
-   pelo onboarding, e gravados nos caminhos privados.
-4. **Credenciais**: `.env` local com permissão `600`. Nunca em chat, nunca em
-   arquivo versionado.
-5. O dono pode versionar SEU vault num repositório PRIVADO próprio; a base
-   pública não estabelece nem exige isso.
-
-## O que um fork pode mudar
-
-- Caminhos privados: defina variáveis de ambiente uma vez (ex.: `HERMES_HOME`)
-  e o resto da base lê delas — nunca caminhos absolutos fixados no código.
-- Módulos: ativar/desativar por config; desligado = código não executa.
+Use os mesmos caminhos na instalação e no serviço do gateway. O comando privado
+inserido no SOUL contém os caminhos escolhidos, mas não altera o ambiente global
+do serviço. Não editar YAML por concatenação: usar `hermes config`/setup nativos.
+O script configurar_hermes.sh preserva a configuração; --perfil-leve é opção
+explícita que define max_turns 25 e compactação em 100 mil tokens com tail lean.
+Não muda aprovações, modelo, STT nem provedores de memória silenciosamente.

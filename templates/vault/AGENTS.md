@@ -6,7 +6,7 @@ Este repositório é a memória durável de {{NOME_DO_AGENTE}}, agente de {{NOME
 ## Regra central
 
 O agente não é dono da memória. A memória vive nestes arquivos Markdown.
-Se a memória interna do agente divergir dos arquivos, **os arquivos vencem**.
+Conferir fonte e data. Uma correção explícita atual do dono prevalece sobre uma nota antiga; atualize a nota com origem, sem transformar inferências em fatos.
 
 ## Hierarquia
 

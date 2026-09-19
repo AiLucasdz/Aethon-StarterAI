@@ -1,42 +1,19 @@
+# Atualizações de forks
 
-# Atualizações — como funciona para quem fez fork
+A base e os dados privados ficam em diretórios separados. Nunca coloque o vault,
+HERMES_HOME ou backups dentro do checkout, mesmo que estejam no .gitignore.
 
-## O princípio: base atualizável + personalização preservada
+Configure o remote `upstream` para o repositório original verificado. Execute
+`bash scripts/update.sh upstream main`. O script exige checkout limpo, busca o
+remote, recusa divergência e atualiza somente por fast-forward. Antes da alteração
+cria e verifica um bundle privado do Git; falha de backup interrompe a atualização.
+Um fork com commits próprios exige revisão e merge manual. Não usar force/reset
+para contornar conflitos. O bundle e o hash anterior permitem recuperar o código
+em outra pasta sem apagar suas mudanças.
 
-Este repositório é uma **base**. A sua instalação tem três camadas:
-
-| Camada | Onde vive | O que acontece na atualização |
-|---|---|---|
-| **Base** (código, docs, templates) | repositório público | atualiza do upstream |
-| **Personalização** (soul, config) | seu servidor, fora do git público | **preservada sempre** |
-| **Dados** (memórias, conversas, tokens) | seu servidor, fora do checkout | **nunca tocada** |
-
-## Fluxo de atualização
-
-```bash
-# 1. backup antes de qualquer coisa (obrigatório)
-tar czf ~/backup-hermes-$(date +%F).tar.gz ~/.hermes --exclude='.hermes/hermes-agent'
-
-# 2. atualizar a base
-cd ~/SEU_FORK
-git pull upstream main
-
-# 3. rodar o migrador (aplica mudanças de base, pula tudo que é seu)
-./scripts/update.sh
-```
-
-## Garantias e limites honestos
-
-- O `update.sh` só toca na camada **base**. Soul, config, memórias e dados
-  do dono são intocados por design.
-- **Se você modificar arquivos da base** (código), pode haver conflito —
-  aí o migrador para e te mostra o diff para decidir. Não prometemos
-  ausência de conflitos em forks que alteram código.
-- Cada release lista migrações versionadas; reversão documentada por release.
-
-## Releases
-
-O upstream publica releases com:
-- changelog legível (o que mudou e por quê)
-- IDs de modelo recomendados **conferidos na data da release** (mudam rápido)
-- instruções de migração quando necessário
+Este processo NÃO faz backup consistente do runtime, NÃO atualiza o Hermes e NÃO
+migra dados privados. Migrações versionadas de configuração e atualização da base
+operacional do SOUL ainda não estão implementadas. O onboarding preserva o SOUL
+existente; uma correção no template não muda automaticamente instalações antigas.
+Leia o changelog antes de atualizar. Não anunciar atualização completa da instalação
+até existirem migrações testadas e recuperação de dados validada.
