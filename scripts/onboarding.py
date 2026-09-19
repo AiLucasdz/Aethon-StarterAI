@@ -209,9 +209,9 @@ def main() -> int:
         print("ONBOARDING_CONCLUIDO")
         print(f"Pronto, {st['nome']} está no ar! 🚀")
         print(f"Backup do vault: {backup}")
-        print("Posso conectar quando você quiser: 📅 Agenda+Tasks · 📧 Gmail · "
-              "🎬 YouTube · 🎙️ Reuniões · 𝕏")
-        print("Quer ativar alguma agora, ou prefere me usar já?")
+        print("Conexões e automações são opcionais: agenda, tarefas, YouTube ou outras que você escolher.")
+        print("Cada uma depende de configuração e teste; nenhuma foi ativada aqui.")
+        print("Quer configurar alguma agora, criar outra automação ou prefere me usar já?")
         return 0
 
     print(f"PERGUNTA:{chave}")
@@ -221,10 +221,12 @@ def main() -> int:
 
 if __name__ == "__main__":
     import fcntl
+    from private_state import locked
     STATE.parent.mkdir(parents=True, exist_ok=True)
     if STATE.is_symlink() or any(p.is_symlink() for p in STATE.parents):
         raise SystemExit("Destino de estado com symlink; recusado")
     fd = os.open(STATE.with_suffix('.lock'), os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
     with os.fdopen(fd, 'w') as guard:
         fcntl.flock(guard, fcntl.LOCK_EX)
-        raise SystemExit(main())
+        with locked():
+            raise SystemExit(main())

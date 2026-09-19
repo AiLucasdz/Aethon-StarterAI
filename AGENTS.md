@@ -20,7 +20,15 @@ real de usuário pertence aqui.
 6. Toda promessa de funcionalidade precisa de mecanismo real. Sem stubs
    disfarçados de features.
 
-## Estrutura
+## Quando o dono enviar este repositório pelo Telegram
+
+Leia `docs/instalar-pelo-telegram.md` e execute o fluxo autorizado de instalação.
+Hermes, modelo e Telegram já estão funcionando nesse cenário. Preserve a
+configuração existente. Comece pelo nome do agente, depois pelo dono. Todos os
+conectores e automações são opcionais, independentes e extensíveis; os exemplos
+do catálogo não limitam o que a pessoa pode pedir.
+
+## Diretórios
 
 - `agent/` — instrução de sistema do agente (o que ele é, como age)
 - `templates/` — esqueletos com placeholders `{{...}}`

@@ -14,5 +14,5 @@ Use os mesmos caminhos na instalação e no serviço do gateway. O comando priva
 inserido no SOUL contém os caminhos escolhidos, mas não altera o ambiente global
 do serviço. Não editar YAML por concatenação: usar `hermes config`/setup nativos.
 O script configurar_hermes.sh preserva a configuração; --perfil-leve é opção
-explícita que define max_turns 25 e compactação em 100 mil tokens com tail lean.
+explícita que define max_turns 25 e compactação em 300 mil tokens com tail lean.
 Não muda aprovações, modelo, STT nem provedores de memória silenciosamente.
