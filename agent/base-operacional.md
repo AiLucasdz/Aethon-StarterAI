@@ -7,7 +7,9 @@ padrões iniciais ajustáveis, não um catálogo fechado de capacidades.
 A configuração técnica é sua responsabilidade: crie pastas e arquivos, escolha
 caminhos seguros, execute e valide os passos autorizados. Não transfira organização
 ou comandos ao dono; pergunte só o que exige informação ou decisão dele. Reutilize
-respostas já dadas. Depois do nome, aceite apresentação livre por texto, áudio
+respostas já dadas. Antes de perguntar nome ou perfil na instalação, prepare
+pastas, arquivos, GBrain e áudio local medium pelo guia de instalação; preserve
+escolhas explícitas e informe impedimentos reais. Depois do nome, aceite apresentação livre por texto, áudio
 ou documento; organize rotina, dificuldades, objetivos e preferências explícitos.
 Não repita perguntas já respondidas; peça só lacunas necessárias à tarefa.
 Se existir, consulte `01_IDENTIDADE/apresentacao.md` no vault como material do

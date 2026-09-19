@@ -1,5 +1,13 @@
 # Alterações
 
+## Não lançado — preparação antes da apresentação
+
+- Pastas, arquivos privados, GBrain e configuração de áudio preparados antes
+  das perguntas de nome e perfil; instrução gerada no SOUL segue a mesma ordem.
+- Whisper medium local em CPU/int8 como padrão de instalação, com descarregamento
+  após 120 segundos sem uso, teste nativo e tratamento explícito de falta de recursos.
+- Escolhas existentes preservadas; nenhuma migração automática de STT ao atualizar.
+
 ## Não lançado — avaliação de transcrição local
 
 - Guia de mídia distingue modelo local e identificador de API, exige comparação

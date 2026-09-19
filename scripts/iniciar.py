@@ -54,7 +54,9 @@ def main(argv=None):
         cmd = shlex.join(['env', f'HERMES_HOME={home}', f'VAULT_PATH={vault}', sys.executable,
                           str(BASE / 'scripts/gateway_hook.py')])
         text += ('\n<!-- onboarding-aethon -->\n## Configuração inicial pendente\n'
-                 f'Antes de iniciar a configuração, execute `{cmd}`. '
+                 f'Antes de perguntar nome ou perfil, conclua a preparação técnica de {BASE / "docs/instalar-pelo-telegram.md"}: '
+                 'GBrain e áudio local medium configurados/testados, ou impedimento técnico informado. '
+                 f'Só então execute `{cmd}`. '
                  'Nome do agente, depois apresentação livre; pergunte só lacunas necessárias. '
                  f'Para organizar áudio/documento, leia {BASE / "docs/onboarding.md"}. '
                  'Use --apresentacao-json ARQUIVO_PRIVADO para perfil organizado. '
@@ -71,7 +73,7 @@ def main(argv=None):
     from modulos import registrar_intencao
     registrar_intencao({})
     print('Templates preservados/criados; onboarding preparado no SOUL.')
-    print('Instalação ainda requer ativar-memoria.py: GBrain é parte do agente; Honcho é oferecido no onboarding.')
+    print('Antes de perguntar nome/perfil: ativar-memoria.py e áudio medium conforme docs/midia.md. Honcho é opcional depois.')
     print('O gateway deve carregar este HERMES_HOME; novas sessões usam o SOUL atualizado.')
     print('Pareamento Telegram e configuração Hermes são pré-requisitos; não foram executados aqui.')
 

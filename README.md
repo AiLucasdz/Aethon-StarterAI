@@ -75,17 +75,18 @@ orienta identificar o perfil correto, preservar configurações e verificar o re
 **O agente executa esses passos.** Você não precisa escolher pastas nem colar
 comandos; responde às perguntas necessárias e autentica suas contas quando preciso.
 
-1. Preparar os arquivos privados e as instruções do runtime.
-2. Perguntar o nome do agente e receber uma apresentação livre por áudio, texto,
+1. Preparar pastas, arquivos privados, instruções e GBrain no perfil correto.
+2. Configurar e testar áudio com Whisper `medium` local antes das perguntas,
+   respeitando os recursos da VPS e escolhas já feitas.
+3. Perguntar o nome do agente e receber uma apresentação livre por áudio, texto,
    PDF ou resumo de outra IA: rotina, dificuldades, preferências e ajuda desejada.
    O agente organiza e pergunta só o que faltar; é possível pular e retomar depois.
-3. Instalar GBrain e o plugin de recuperação no perfil que atende a conversa.
 4. Se Honcho for aceito, iniciar o setup nativo na mesma instalação. Sem terminal
    interativo, informar autenticação pendente e o comando para continuar com segurança.
 5. Conferir instruções carregadas e recuperação pelo consumidor real antes de
    anunciar funcionamento. Outros pedidos podem ser atendidos durante o onboarding.
 
-A base não troca seu modelo, bot ou pareamento. VPS/Hermes/Telegram são
+A base não troca seu modelo de conversa, bot ou pareamento. VPS/Hermes/Telegram são
 pré-requisitos; o vídeo de preparação ainda está pendente. Consulte a
 [instalação escrita](docs/instalacao.md). Há um
 [link de indicação opcional de VPS](https://www.hostinger.com/br?REFERRALCODE=O23ELLUCA0ZD);

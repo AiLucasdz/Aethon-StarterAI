@@ -4,45 +4,68 @@ O agente usa a transcrição e as ferramentas de leitura do Hermes. O template n
 instala outro serviço de mídia, não garante STT pronto em toda VPS e não envia
 arquivos a um provedor novo sem explicar a configuração ao dono.
 
-Antes de oferecer áudio na instalação nova:
+## Preparação antes do nome e da apresentação
 
-1. Conferir a configuração STT, provider efetivo e dependências do Hermes instalado.
-2. Preservar o backend existente. Para conversa em português, conferir o idioma
-   efetivo (campo global `stt.language` e eventual override do backend). Configurar
-   português se essa for a preferência; não deixar um override em inglês sem perceber.
-3. Se faltar backend, configurar uma opção nativa adequada aos recursos do servidor.
-   Local evita cobrança de API, mas exige dependências/modelo e pode ser lento em CPU.
-   Remoto exige conta, consentimento ao processamento e avaliação de custo.
-4. Testar `tools.transcription_tools.transcribe_audio` no Python do Hermes com uma
-   amostra de teste, sem injetá-la na conversa ou memória pessoal. Conferir sucesso,
-   fidelidade ao texto de referência, tempo e pico de memória. Voz sintética serve
-   para verificar execução, mas não certifica precisão com fala natural. Depois,
-   um áudio recebido deve ser transcrito antes de extrair perfil.
-   Confira trechos ambíguos com o dono antes de salvar nomes, números ou compromissos.
-5. Se não estiver funcional, informar que áudio está pendente e aceitar texto/documento;
-   não tratar o nome do arquivo ou o recebimento pelo Telegram como transcrição.
+Na instalação nova, o padrão é **Whisper `medium` local, CPU/int8**, com idioma
+da conversa e descarregamento após 120 segundos sem uso. Preparar depois das
+pastas e GBrain, antes de pedir nome ou informações pessoais. O agente executa
+os passos; o dono não precisa instalar nem escolher pastas técnicas.
 
-### Escolha do modelo local
+1. Identificar o executável, Python e `HERMES_HOME` do perfil que atende a conversa.
+   Inspecionar STT e preservar uma escolha explícita existente. Atualização do
+   template não autoriza sobrescrever um backend/modelo personalizado.
+2. Conferir disco, RAM disponível e consumidores ativos. Baixar/carregar pesos
+   tem custo distinto de transcrever. Reservar memória para gateway e cérebro;
+   usar limite de memória no teste quando o host permitir. Se não couber, informar
+   a pendência; não trocar silenciosamente para Small, Turbo ou API externa.
+3. Garantir `faster-whisper` no ambiente Python do Hermes pelo mecanismo nativo
+   de dependências da versão instalada. Não instalar outro daemon ou pipeline.
+   Baixar o modelo antecipadamente nesse Python:
 
-No faster-whisper, `small` e `large-v3-turbo` são opções locais; o nome
-`whisper-large-v3-turbo` usado por APIs não é o identificador local. Confirmar
-suporte na versão instalada. Em CPU, avaliar `stt.local.device=cpu` e
-`stt.local.compute_type=int8` pelo mecanismo nativo de configuração do Hermes.
-Referências: [faster-whisper](https://github.com/SYSTRAN/faster-whisper) e
-[modelo convertido](https://huggingface.co/dropbox-dash/faster-whisper-large-v3-turbo).
+   ```python
+   from faster_whisper.utils import download_model
+   download_model("medium")
+   ```
 
-Antes de trocar o backend/modelo existente, comparar a mesma amostra com texto
-conhecido e, quando disponível, fala natural autorizada. Medir primeira chamada
-com modelo em disco e chamada com modelo já carregado, separando download.
-Verificar RAM livre para gateway/memória e comportamento com áudio mais longo;
-modelo maior não é melhoria comprovada apenas por retornar `success=true`.
-Sem ganho proporcional de precisão e custo, preservar a configuração existente.
+4. Preservar uma cópia privada da configuração fora do checkout. No perfil
+   confirmado, aplicar pelo CLI nativo do Hermes (exemplo para conversa em português):
 
-Usar `transcribe_audio(caminho, model="large-v3-turbo")` somente após confirmar
-provider efetivo `local`; esse teste não exige trocar o modelo de conversa.
-Baixar pesos antecipadamente evita esperar o download no primeiro áudio do dono.
-Não instalar serviço paralelo, enviar amostra à conversa, copiar credencial de
-outro agente ou ativar API paga como alternativa automática.
+   ```bash
+   hermes config set stt.provider local
+   hermes config set stt.language pt
+   hermes config set stt.local.language pt
+   hermes config set stt.local.device cpu
+   hermes config set stt.local.compute_type int8
+   hermes config set stt.local.unload_after_idle_seconds 120
+   hermes config set stt.local.model medium
+   ```
+
+   Ajustar idioma conforme a conversa; não usar `.en` para português. Confirmar
+   suporte desses campos no Hermes instalado e leitura efetiva pelo transcritor.
+   Modelo de conversa, credenciais, bot e pareamento permanecem preservados.
+5. Executar `tools.transcription_tools.transcribe_audio(caminho)` no Python do
+   Hermes, sem override de modelo, com uma amostra de teste de texto conhecido.
+   O agente prepara a amostra; não exige áudio pessoal para concluir essa etapa.
+   Conferir provider/modelo efetivos, texto, latência e pico de memória. Medir
+   primeira chamada com pesos em disco e chamada já carregada, separando download.
+   Não injetar a amostra na conversa, perfil ou memória. Voz sintética verifica
+   execução, mas não certifica precisão com fala natural nem áudios longos.
+6. Em falha, reverter somente alterações STT desta instalação para os valores
+   anteriores e informar a pendência; seguir com nome/apresentação por texto sem
+   prometer áudio funcional. Em sucesso, oferecer áudio. Validar recebimento e
+   transcrição no consumidor quando chegar uma gravação real; até lá, distinguir
+   teste local de teste ponta a ponta no Telegram. Não reiniciar o gateway dentro
+   do turno ativo; seguir o mecanismo de recarga da versão instalada se necessário.
+
+## Precisão e custo
+
+`medium` é o padrão inicial, não garantia de fidelidade. Confirmar com o dono
+nomes, números e compromissos ambíguos antes de registrá-los. Escolhas posteriores
+podem usar outros modelos, após avaliar precisão, tempo e recursos. Local não
+cobra API de transcrição, mas utiliza CPU, RAM e disco da VPS. Provider remoto
+exige conta, autorização ao processamento e avaliação de custo.
+
+Referência: [faster-whisper](https://github.com/SYSTRAN/faster-whisper).
 
 PDF/texto: conferir leitura real das páginas e extrair informações com origem.
 PDF escaneado pode precisar de OCR; se indisponível, explicar a limitação.

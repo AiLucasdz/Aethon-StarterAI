@@ -1,8 +1,9 @@
 # Configuração inicial por conversa
 
 O dono envia o repositório e pede para iniciar. O agente executa o
-[fluxo de instalação](instalar-pelo-telegram.md), cria a estrutura privada e
-pergunta apenas:
+[fluxo de instalação](instalar-pelo-telegram.md): cria pastas e arquivos privados,
+prepara GBrain e configura/testa áudio local `medium` antes de perguntar nome ou
+perfil. Não é preciso conhecer o dono para preparar essa base. Depois, pergunta apenas:
 
 1. Como quer chamar o agente.
 2. Uma apresentação livre: como quer ser chamado, comunicação, trabalho, rotina,

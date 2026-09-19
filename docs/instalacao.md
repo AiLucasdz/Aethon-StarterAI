@@ -17,11 +17,12 @@
 
 Link do vídeo ainda pendente. Com Hermes e bot já configurados, envie ao agente
 no Telegram o repositório e peça “iniciar meu agente com este template”. Ele deve
-seguir [instalar-pelo-telegram.md](instalar-pelo-telegram.md), criar a estrutura e
-ativar/verificar GBrain. A pessoa responde às perguntas necessárias e participa
+seguir [instalar-pelo-telegram.md](instalar-pelo-telegram.md), criar a estrutura,
+preparar GBrain e testar áudio local medium antes de perguntar nome e perfil.
+A pessoa responde às perguntas necessárias e participa
 de autenticações quando exigidas. Não precisa criar pastas ou operar scripts.
 Veja [onboarding.md](onboarding.md) para carregamento do SOUL e retomada.
-O onboarding não coleta token GitHub; registra somente interesse em backup.
+O onboarding não coleta token GitHub nem pergunta sobre backup.
 
 ## Referência escrita (oficial)
 

@@ -1,5 +1,10 @@
 # Conversa fictícia de onboarding
 
+**Agente:** Vou preparar a estrutura e a transcrição de áudio. Depois personalizamos.
+
+O agente cria pastas e arquivos privados, prepara GBrain e configura/testa Whisper
+medium local. Neste exemplo, essas etapas foram concluídas antes da pergunta abaixo.
+
 **Agente:** Como você quer me chamar?
 
 **Pessoa:** Aurora.

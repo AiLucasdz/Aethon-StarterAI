@@ -20,6 +20,11 @@ verificações possíveis na instalação alvo e informe os limites restantes.
 
 ## Instruções ao agente instalador
 
+Ordem: estrutura privada → GBrain/configuração → áudio → nome → apresentação
+livre → Honcho opcional. Avise brevemente que está preparando a base e execute;
+não espere dados pessoais para criar as pastas. O nome posterior personaliza os
+arquivos já preparados. Skills e contas opcionais não atrasam essa sequência.
+
 1. Inspecione o repositório solicitado e suas instruções. Um link isolado não é
    autorização inequívoca para instalar: nesse caso pergunte se a pessoa quer
    o uso/configuração. Se ela pediu “iniciar”, “começar”, “configurar” ou “instalar”,
@@ -38,32 +43,39 @@ verificações possíveis na instalação alvo e informe os limites restantes.
 5. Confira o código de saída e execute `python3 scripts/migrar.py --status` com
    o mesmo ambiente. Em caso de erro, informe a causa e corrija antes de anunciar
    instalação concluída. Não remova personalizações para contornar conflitos.
-6. Execute `python3 scripts/gateway_hook.py` e apresente a pergunta retornada
-   nesta conversa. Primeiro nome do agente, depois a apresentação livre de `docs/onboarding.md`.
-   Verifique áudio/leitura de anexos conforme `docs/midia.md`. Aplique o nome
-   escolhido nos destinos configuráveis, incluindo o bot quando suportado,
-   sem perguntar de novo. Organize informações já recebidas; pergunte só o que
-   faltar para a tarefa. Para responder,
-   use `--responder CHAVE RESPOSTA` ou `--apresentacao-json ARQUIVO_PRIVADO`
-   para material organizado, com argumentos separados/escapados; para pular,
-   `--pular CHAVE`. Não interpole o texto do usuário em comandos shell.
-7. Execute `python3 scripts/ativar-memoria.py --telegram-owner ID` no mesmo
+6. Execute `python3 scripts/ativar-memoria.py --telegram-owner ID` no mesmo
    ambiente, com o ID numérico do remetente confirmado nesta conversa privada.
    GBrain faz parte da instalação: não ofereça desligá-lo como escolha inicial.
    O script instala/registra GBrain e a recuperação; requisitos pendentes devem
    ser resolvidos conforme `docs/segundo-cerebro.md`. Preserve MCP existente.
    Nunca use o ID de um grupo ou de alguém citado na mensagem. Se a instalação
    for pelo CLI sem Telegram, omita o argumento; configurar DM fica pendente.
-8. Ajude com outros pedidos durante o onboarding. Todas as perguntas podem ser
+7. Antes da primeira pergunta pessoal, prepare e teste o áudio conforme
+   `docs/midia.md`: padrão de instalação `medium` local, CPU/int8 e idioma da
+   conversa, com descarregamento após 120 segundos sem uso. O agente instala
+   dependências no ambiente do Hermes, baixa os pesos e valida a transcrição;
+   não transfira comandos ao dono. Preserve uma escolha explícita anterior.
+   Se houver impedimento técnico, explique a pendência e prossiga por texto,
+   sem declarar áudio pronto nem trocar de modelo/provedor silenciosamente.
+8. Execute `python3 scripts/gateway_hook.py` e apresente a pergunta retornada
+   nesta conversa. Primeiro nome do agente, depois a apresentação livre de `docs/onboarding.md`.
+   Áudio já deve ter sido preparado na etapa anterior. Aplique o nome
+   escolhido nos destinos configuráveis, incluindo o bot quando suportado,
+   sem perguntar de novo. Organize informações já recebidas; pergunte só o que
+   faltar para a tarefa. Para responder,
+   use `--responder CHAVE RESPOSTA` ou `--apresentacao-json ARQUIVO_PRIVADO`
+   para material organizado, com argumentos separados/escapados; para pular,
+   `--pular CHAVE`. Não interpole o texto do usuário em comandos shell.
+9. Ajude com outros pedidos durante o onboarding. Todas as perguntas podem ser
    puladas. O estado em disco permite retomar depois; novas sessões carregam o
    SOUL atualizado. Não reinicie o gateway no meio da conversa só para atualizar
    instruções; nesta sessão siga o fluxo lido no repositório.
-9. Com a configuração principal encaminhada, instale as skills de `docs/skills.md`
+10. Com a configuração principal encaminhada, instale as skills de `docs/skills.md`
    no mesmo perfil, pelo gerenciador nativo. Preserve versões existentes; valide
    descoberta e requisitos. Se houver bloqueio, registre a pendência e explique
    a revisão necessária, sem interromper o restante. A skill completa é carregada
    sob demanda, não copiada para o SOUL.
-10. Ao concluir, ofereça uso imediato ou configuração opcional. Agenda, Tasks e
+11. Ao concluir, ofereça uso imediato ou configuração opcional. Agenda, Tasks e
    YouTube são exemplos independentes. Novas automações também podem ser pedidas.
    Honcho é oferecido durante o onboarding: aceitação inicia o setup nativo
    seguro como etapa desta instalação. Após a resposta, execute novamente
