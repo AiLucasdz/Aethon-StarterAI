@@ -21,3 +21,11 @@ __pycache__/
 *.bundle
 *.tar.gz
 .git-credentials
+
+# runtime e provedores: fora do checkout, mesmo em repositório privado
+.env.*
+.gbrain/
+brain.pglite/
+honcho.json
+config.yaml
+SOUL.md

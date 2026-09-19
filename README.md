@@ -1,90 +1,114 @@
-# Aethon-StarterAI — base para seu agente pessoal
+# Aethon-StarterAI — seu agente pessoal como segundo cérebro
 
-> Template público. Nenhum dado pessoal aqui — a configuração privada da sua
-> instalação vive fora deste repositório (ver `docs/privacidade.md`).
+Template para [Hermes Agent](https://hermes-agent.nousresearch.com/docs), com
+identidade escolhida no onboarding, arquivos privados organizados, decisões,
+lições e recuperação de contexto antes de responder. GBrain faz parte da
+instalação; Honcho é oferecido e pode ser recusado.
 
-## O que é
+**Estado:** instalação e recuperação verificadas em runtime isolado com Hermes
+e GBrain reais. A instalação completa por conversa em um Telegram novo,
+autenticação real do Honcho e utilidade cotidiana ainda precisam de validação.
 
-Uma base replicável de agente pessoal, construída sobre o
-[Hermes Agent](https://hermes-agent.nousresearch.com/docs). Você instala na sua
-VPS, conecta seu Telegram, escolhe o nome do seu agente e ativa gradualmente as
-conexões que quiser.
+## Começar pelo Telegram
 
-**Estado: versão em revisão, sem validação completa em VPS/Telegram.** Veja [limites e desempenho](docs/performance.md).
+Com Hermes funcionando e seu bot já pareado, envie:
 
-**Seu agente, seu nome.** Durante o onboarding no Telegram, a primeira coisa
-que o agente vai te pedir é:
+> https://github.com/AiLucasdz/Aethon-StarterAI
+> Quero iniciar a configuração do meu agente com este template.
 
-1. **O nome dele** — você escolhe (exemplos: Argos, Jarvis, Sábi, como preferir).
-2. **Quem é você** — nome, o que faz, o que o agente pode e não pode fazer por você.
+“Iniciar”, “começar”, “configurar” e “instalar” autorizam o mesmo fluxo. O agente
+precisa conseguir ler o repositório e executar comandos no servidor. Um link
+sozinho não instala nada. O [guia do instalador](docs/instalar-pelo-telegram.md)
+orienta identificar o perfil correto, preservar configurações e verificar o resultado.
 
-Essas informações moldam a personalidade do agente (arquivo `soul` dele) e são
-gravadas nos arquivos privados da sua instalação. Telegram, modelo e integrações podem processar as mensagens; armazenamento local não significa processamento exclusivamente local.
+1. Preparar os arquivos privados e as instruções do runtime.
+2. Perguntar primeiro o nome do agente, depois quem é o dono e suas preferências,
+   um item por vez. É possível pular perguntas e retomar depois.
+3. Instalar GBrain e o plugin de recuperação no perfil que atende a conversa.
+4. Se Honcho for aceito, iniciar o setup nativo na mesma instalação. Sem terminal
+   interativo, informar autenticação pendente e o comando para continuar com segurança.
+5. Conferir instruções carregadas e recuperação pelo consumidor real antes de
+   anunciar funcionamento. Outros pedidos podem ser atendidos durante o onboarding.
 
-## Como funciona (visão geral)
+A base não troca seu modelo, bot ou pareamento. VPS/Hermes/Telegram são
+pré-requisitos; o vídeo de preparação ainda está pendente. Consulte a
+[instalação escrita](docs/instalacao.md). Há um
+[link de indicação opcional de VPS](https://www.hostinger.com/br?REFERRALCODE=O23ELLUCA0ZD);
+usá-lo não é requisito.
 
-```
-Você (Telegram) ↔ Hermes (VPS) ↔ Modelo de IA (OpenRouter: GLM ou DeepSeek)
-                        ↕
-            Memória local (Markdown + índice)
-                        ↕
-      Conexões que VOCÊ ativar: Agenda, Tasks, Gmail, YouTube, Reuniões...
-```
+## O que fica onde
 
-## Segundo cérebro desde a instalação
-
-GBrain, vault e memória nativa disponível fazem parte do agente. O onboarding
-inclui a etapa de configurar Honcho para continuidade adicional; você pode recusá-lo sem perder a
-função de segundo cérebro. GBrain novo começa com busca textual sem chave;
-busca semântica requer configuração de embeddings e validação de custo.
-
-Decisões e lições têm fontes próprias, captura com origem e recuperação antes do
-turno pelo plugin Hermes. A [lógica de memória](agent/memoria.md) distingue
-registro, recuperação e aplicação. Isso não promete captura perfeita em toda conversa.
-
-## Instalação
-
-**A instalação (VPS + Hermes + Telegram) é ensinada em vídeo pelo criador.**
-O link do vídeo ainda está pendente. Após instalar Hermes e parear o bot, execute
-o fluxo de [instalação pelo seu agente](docs/instalar-pelo-telegram.md): envie o
-link e diga “iniciar”, “começar”, “configurar meu agente” ou “instalar”. O agente executa `iniciar.py`, conduz o onboarding e
-`ativar-memoria.py` instala GBrain/recuperação no perfil correto. Enviar um link
-sozinho não executa código. Preserva modelo, bot e personalizações existentes.
-A validação real de uma instalação nova inteira pelo Telegram ainda está pendente.
-
-- Link de VPS recomendada: [Hostinger, código de indicação](https://www.hostinger.com/br?REFERRALCODE=O23ELLUCA0ZD)
-- Visão geral escrita: [docs/instalacao.md](docs/instalacao.md)
-- Conexões opcionais: [docs/catalogo-modulos.md](docs/catalogo-modulos.md)
-- Memória (vault): [docs/vault.md](docs/vault.md) — Obsidian é opcional; o vault é só Markdown no seu servidor
-
-## Conexões opcionais — adaptadores ainda pendentes
-
-Nada é ativado por padrão. Após o onboarding, o agente te pergunta o que você
-quer ativar, explicando custo, benefício e requisitos de cada uma:
-
-| Conexão | Para que serve |
+| Local | Responsabilidade |
 |---|---|
-| Google Agenda + Tasks | Compromissos, tarefas, planejamento diário |
-| Gmail | Leitura e envio de e-mails (com confirmação) |
-| YouTube | Análise do seu próprio canal |
-| Reuniões (Fathom) | Resumos e acompanhamento de decisões |
-| X/Twitter | Pesquisa e resumos, quando implementado e autorizado |
+| Checkout deste template | Código, instruções genéricas e esqueletos; sem dados da instalação |
+| `HERMES_HOME/SOUL.md` | Identidade e bloco operacional gerenciado; texto externo preservado |
+| `HERMES_HOME/memories/` e `state/` | Memória nativa e estado privado de onboarding/módulos |
+| `VAULT_PATH/AGENTS.md` | Regras e mapa das fontes privadas |
+| `VAULT_PATH/08_DECISOES/decisoes.md` | Escolhas confirmadas, motivo, origem e revisão |
+| `VAULT_PATH/09_AGENTES/licoes-operacionais.md` | Aprendizados observados, evidência e condição de aplicação |
+| Demais pastas do vault | Identidade, projetos, capturas, diário, relações e contexto exportável |
+| `<HERMES_HOME>-gbrain/.gbrain` | Base nova do GBrain, fora do runtime e do checkout |
 
-Credenciais nunca são pedidas no chat — sempre por entrada segura ou OAuth.
+Os caminhos privados são configuráveis. Uma instalação GBrain existente é
+preservada. Obsidian é opcional: o [vault](docs/vault.md) é Markdown comum.
+Honcho complementa a continuidade; não substitui as fontes canônicas.
 
-## Para quem é
+## Capturar, recuperar e aplicar
 
-- Quem quer um assistente pessoal com memória, rodando no seu próprio servidor
-- Quem quer controlar exatamente quais dados saem de casa
-- Desenvolvedores que querem fazer fork e melhorar
+O [contrato de memória](agent/memoria.md) orienta registrar somente informação
+durável pertinente, com origem, na fonte correta. Decisão não é mera sugestão;
+lição precisa de evidência. Estado temporário permanece no projeto. Antes de
+repetir uma escrita no GBrain, consultar o registro existente; a configuração
+inicial sem embeddings não garante deduplicação automática.
 
-## Licença e garantias
+O plugin consulta regras, decisões e lições relevantes e usa o MCP GBrain já
+aberto pelo Hermes. Atua no CLI do perfil e na DM do dono configurado; exclui
+grupos, cron e subagentes. Tem limite de 6.000 caracteres e timeout de 6 segundos
+para GBrain, sem chamada própria a modelo. Não é um gravador de toda mensagem:
+a captura e a aplicação ainda dependem do agente seguindo as instruções.
 
-- Sem garantias — leia o código antes de rodar no seu servidor
-- Custos da sua conta: VPS + API do modelo (nada incluso aqui é grátis de verdade)
+GBrain novo começa com busca textual sem chave de embeddings. Busca semântica
+exige configuração adicional. Desempenho, contexto limitado, mecanismos nativos,
+custo e código legível são princípios da base; veja [limites](docs/performance.md)
+e [ativação de memória](docs/segundo-cerebro.md).
 
----
+## Conexões, privacidade e atualizações
 
-*Este projeto é mantido por forks da comunidade. A base atualizável acompanha
-releases do upstream; suas personalizações ficam em arquivos que o sistema
-sabe preservar durante atualizações (ver `docs/atualizacoes.md`).*
+Agenda, Tasks, Gmail, YouTube, reuniões e outras conexões são opcionais. O
+[catálogo](docs/catalogo-modulos.md) descreve possibilidades, não adaptadores
+já instalados. Registrar intenção não conecta contas nem agenda rotinas;
+cada integração exige configuração e consulta real.
+
+Credenciais entram pelo fluxo seguro do serviço, nunca no chat, Git ou argumentos
+de comandos. Runtime e vault ficam fora do checkout. Telegram, modelo, Honcho e
+outros serviços podem processar conteúdo conforme sua configuração; armazenamento
+local não significa processamento exclusivamente local. Leia [privacidade](docs/privacidade.md).
+
+[Atualizações](docs/atualizacoes.md) preservam personalizações e recusam conflitos
+no bloco gerenciado. **Backup nativo do Hermes não cobre o vault nem a base
+GBrain externos.** Após restaurar o runtime, reinstale/verifique o plugin que
+aponta para o checkout. Intenção de backup no onboarding não cria backup.
+
+## Validar e contribuir
+
+Python 3.11+, ambiente Linux e Hermes com suporte aos plugins utilizados são
+necessários para o fluxo executável. Para instalar GBrain novo, o instalador
+precisa de Bun ou de um binário GBrain disponível; dependências ausentes são
+informadas, não tratadas como sucesso.
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+Teste opcional em diretórios temporários, com Hermes e GBrain já instalados:
+
+```bash
+python3 scripts/testar-runtime.py --hermes /caminho/para/hermes --gbrain /caminho/para/gbrain
+```
+
+Esse teste usa dados fictícios e verifica integração nativa; não autentica Honcho
+nem envia mensagens ao Telegram. Veja [scripts disponíveis](docs/modulos-rotina.md).
+Antes de publicar, revise também metadados Git, histórico, tags e artefatos.
+
+Licença [MIT](LICENSE), sem garantia. Infraestrutura, API do modelo e serviços
+contratados são custos da própria instalação.

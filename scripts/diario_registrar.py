@@ -26,9 +26,7 @@ def main() -> int:
     args = p.parse_args()
 
     dia = date.fromisoformat(args.data).isoformat() if args.data else date.today().isoformat()
-    VAULT.mkdir(parents=True, exist_ok=True)
     arq = VAULT / "07_DIARIO" / f"{dia}.md"
-    arq.parent.mkdir(parents=True, exist_ok=True)
 
 
     bloco = f"\n## {args.tipo} — origem: {args.origem}\n\n{args.texto}\n"

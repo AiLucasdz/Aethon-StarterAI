@@ -1,15 +1,20 @@
-# Scripts entregues
+# Scripts e pontos de execução
 
-- iniciar.sh/iniciar.py: templates privados e instrução de onboarding no SOUL.
-- onboarding.py/gateway_hook.py: perguntas, estado e perfil. O hook é chamado
-  pelo modelo; não é callback registrado automaticamente no gateway.
-- diario_registrar.py/raw_capture.py: captura quando invocados; nenhuma rotina
-  automática instalada. ID de mensagem com hash exato, lock e escrita atômica.
-- briefing_data.py: data no fuso explícito ou escolhido no onboarding.
-- soul_sync.py: projeção manual; recusa sobrescrever conteúdo diferente.
-- configurar_hermes.sh/configurar_bot.sh: usam o Hermes nativo já instalado.
-- update.sh: atualização Git fast-forward; não é migrador do runtime.
-- testar-instalacao-limpa.sh: testes locais isolados, sem API ou Telegram.
+| Componente | O que executa |
+|---|---|
+| `iniciar.sh` / `iniciar.py` | Cria templates privados ausentes e prepara onboarding no SOUL |
+| `onboarding.py` / `gateway_hook.py` | Perguntas, retomada e projeção de identidade; chamados pelo agente, não callback nativo |
+| `migrar.py` | Status, atualização do bloco gerenciado e rollback com preservação de personalizações |
+| `ativar-memoria.py` | Instala/preserva GBrain, configura plugin e inicia setup Honcho aceito; sem terminal informa pendência |
+| `plugins/aethon-memory` | Recuperação antes do turno pelo hook nativo do Hermes; não escreve memórias |
+| `modulos.py` | Registro de intenção/estado, sem instalar conectores nem agendar rotinas |
+| `raw_capture.py` / `diario_registrar.py` | Captura quando invocados, com ID exato, lock e escrita atômica |
+| `briefing_data.py` | Data no fuso explícito ou escolhido no onboarding |
+| `soul_sync.py` | Projeção manual; recusa sobrescrever conteúdo diferente |
+| `configurar_hermes.sh` / `configurar_bot.sh` | Acionam a configuração nativa do Hermes já instalado |
+| `update.sh` | Atualização Git fast-forward, com backup; migração privada é etapa separada |
+| `testar-instalacao-limpa.sh` | Testes locais isolados |
+| `testar-runtime.py` | Teste isolado com Hermes/GBrain reais, sem Telegram ou conta Honcho |
 
-Demais integrações estão no catálogo como pendentes. Nenhum script de diário
-faz push automático. A revisão de privacidade é separada da atualização.
+Nada aqui instala check-in diário ou faz push automático de memórias. Conectores
+externos dependem do [fluxo próprio](conectores.md), configuração e validação.

@@ -1,5 +1,17 @@
 # Alterações
 
+## Não lançado — revisão de organização e privacidade
+
+- README reorganizado com fluxo de início, fontes privadas, memória, limites de
+  validação, backup e testes. Guias antigos alinhados ao onboarding no SOUL,
+  Honcho opcional e GBrain como parte da instalação.
+- Escritas privadas recusam checkout público e caminhos com symlinks ancestrais,
+  inclusive em capturas e preenchimento do perfil. Ajuda do onboarding sem efeitos.
+- Conectores documentados como configuração dependente da instalação; removidos
+  exemplos que transportavam código OAuth em argumentos e promessas de rotinas.
+- Auditoria de privacidade deve incluir autoria/committer e referências históricas;
+  varrer apenas o conteúdo dos arquivos não comprova histórico livre de dados pessoais.
+
 ## Não lançado — iniciar e configurar Honcho no mesmo fluxo
 
 - “Iniciar”, “começar”, “configurar” e “instalar” autorizam o mesmo fluxo quando

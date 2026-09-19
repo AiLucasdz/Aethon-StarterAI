@@ -22,7 +22,6 @@ def main() -> int:
     args = p.parse_args()
 
 
-    INBOX.parent.mkdir(parents=True, exist_ok=True)
     bloco = f"\n## {date.today().isoformat()} — origem: {args.origem}\n\n{args.texto}\n"
 
     from capture_store import append_once

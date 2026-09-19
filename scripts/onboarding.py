@@ -2,9 +2,9 @@
 """Onboarding do agente — primeira conversa no Telegram.
 
 Fluxo: nome do agente -> quem e o dono -> preferencias -> fuso ->
-nome do bot Telegram -> backup GitHub (OPCIONAL, tudo pode ser pulado).
+nome do bot Telegram -> backup GitHub -> Honcho (opcionais; perguntas podem ser puladas).
 
-Nao improvisa nada: o gateway chama este script e o agente usa EXATAMENTE
+O agente chama este script pela instrução no SOUL e usa
 o texto de saida. Toda pergunta aceita "pular". Idempotente.
 
 Uso:
@@ -19,6 +19,7 @@ import os
 import sys
 from datetime import date
 from pathlib import Path
+from private_state import safe
 
 HERMES_HOME = Path(os.environ.get("HERMES_HOME", Path.home() / ".hermes"))
 VAULT = Path(os.environ.get("VAULT_PATH", Path.home() / "vault"))
@@ -109,7 +110,7 @@ def aplicar_resposta(st: dict, chave: str, resposta: str) -> dict:
 
 def preencher_artefatos(st: dict) -> None:
     """Onboarding concluido: grava soul e perfil no vault com as respostas."""
-    soul_tpl = HERMES_HOME / "SOUL.md"
+    soul_tpl = safe(HERMES_HOME / "SOUL.md")
     if soul_tpl.is_symlink():
         raise ValueError("SOUL é symlink")
     if soul_tpl.exists():
@@ -132,7 +133,7 @@ def preencher_artefatos(st: dict) -> None:
         soul_tpl.write_text(texto)
         soul_tpl.chmod(0o600)
 
-    rules = VAULT / "AGENTS.md"
+    rules = safe(VAULT / "AGENTS.md")
     if rules.is_symlink():
         raise ValueError("AGENTS privado é symlink")
     if rules.exists():
@@ -140,7 +141,7 @@ def preencher_artefatos(st: dict) -> None:
         rules.write_text(text.replace("{{NOME_DO_DONO}}", st.get("dono_nome", "")))
         rules.chmod(0o600)
 
-    perfil = VAULT / "01_IDENTIDADE" / "perfil.md"
+    perfil = safe(VAULT / "01_IDENTIDADE" / "perfil.md")
     if perfil.is_symlink():
         raise ValueError("Perfil é symlink")
     if perfil.exists():
@@ -163,13 +164,15 @@ def preencher_artefatos(st: dict) -> None:
         apply()
 
 
-def main() -> int:
+def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--iniciar", action="store_true", help="retorna a proxima pergunta")
     p.add_argument("--responder", nargs=2, metavar=("CHAVE", "RESPOSTA"))
     p.add_argument("--pular", metavar="CHAVE")
-    args = p.parse_args()
+    return p.parse_args()
 
+
+def main(args) -> int:
     import re
     if args.responder and re.search(r"(?:ghp_|github_pat_|sk-or-v1-)[A-Za-z0-9_\-]{12,}", args.responder[1]):
         print("ERRO: credencial recusada; utilize autenticação no terminal.")
@@ -256,11 +259,13 @@ def main() -> int:
 if __name__ == "__main__":
     import fcntl
     from private_state import locked
-    STATE.parent.mkdir(parents=True, exist_ok=True)
-    if STATE.is_symlink() or any(p.is_symlink() for p in STATE.parents):
-        raise SystemExit("Destino de estado com symlink; recusado")
+    args = parse_args()
+    HERMES_HOME = safe(HERMES_HOME)
+    VAULT = safe(VAULT)
+    STATE = safe(HERMES_HOME / "state" / "onboarding.json")
+    STATE.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     fd = os.open(STATE.with_suffix('.lock'), os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
     with os.fdopen(fd, 'w') as guard:
         fcntl.flock(guard, fcntl.LOCK_EX)
         with locked():
-            raise SystemExit(main())
+            raise SystemExit(main(args))

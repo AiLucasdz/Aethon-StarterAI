@@ -6,9 +6,9 @@ Env: HERMES_HOME (default ~/.hermes)
 """
 import hashlib
 import os
-import shutil
 import sys
 from pathlib import Path
+from private_state import safe
 
 HERMES_HOME = Path(os.environ.get("HERMES_HOME", Path.home() / ".hermes"))
 
@@ -22,9 +22,7 @@ def main() -> int:
         print(f"fonte nao encontrada: {src}")
         return 1
     dst = Path(sys.argv[2]).expanduser() if len(sys.argv) > 2 else HERMES_HOME / "SOUL.md"
-    if dst.is_symlink() or any(p.is_symlink() for p in dst.parents):
-        print("Destino com symlink; projeção recusada")
-        return 1
+    dst = safe(dst)
     dst.parent.mkdir(parents=True, exist_ok=True)
     changed = True
     if dst.exists():

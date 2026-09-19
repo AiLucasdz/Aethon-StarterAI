@@ -71,6 +71,42 @@ class Regression(unittest.TestCase):
         self.run_script('iniciar.py',ok=False)
         self.assertEqual(list(elsewhere.iterdir()),[])
 
+    def test_nested_symlink_cannot_receive_private_data(self):
+        elsewhere = self.root / 'outside'
+        elsewhere.mkdir()
+        vault = self.root / 'vault'
+        vault.mkdir()
+        (vault / '01_IDENTIDADE').symlink_to(elsewhere, target_is_directory=True)
+        self.run_script('iniciar.py', ok=False)
+        self.assertEqual(list(elsewhere.iterdir()), [])
+        (vault / '00_INBOX').symlink_to(elsewhere, target_is_directory=True)
+        self.run_script('raw_capture.py', '--origem', 'teste', '--texto', 'fictício', ok=False)
+        self.assertEqual(list(elsewhere.iterdir()), [])
+
+    def test_private_writers_reject_public_checkout(self):
+        destination = BASE / 'privacy-test-must-not-exist'
+        self.assertFalse(destination.exists())
+        self.env['VAULT_PATH'] = str(destination)
+        for script, args in [
+            ('raw_capture.py', ['--origem', 'teste', '--texto', 'fictício']),
+            ('diario_registrar.py', ['--origem', 'teste', '--texto', 'fictício']),
+            ('onboarding.py', ['--iniciar']),
+        ]:
+            self.run_script(script, *args, ok=False)
+            self.assertFalse(destination.exists())
+        self.run_script('soul_sync.py', str(BASE / 'templates/soul-template.md'),
+                        str(destination / 'SOUL.md'), ok=False)
+        self.assertFalse(destination.exists())
+        self.env['VAULT_PATH'] = str(self.root / 'vault')
+        self.env['HERMES_HOME'] = str(destination)
+        self.run_script('onboarding.py', '--iniciar', ok=False)
+        self.assertFalse(destination.exists())
+
+    def test_onboarding_help_has_no_private_side_effect(self):
+        self.run_script('onboarding.py', '--help')
+        self.assertFalse((self.root / 'runtime').exists())
+        self.assertFalse((self.root / 'vault').exists())
+
 
 if __name__ == '__main__':
     unittest.main()

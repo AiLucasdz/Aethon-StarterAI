@@ -6,6 +6,7 @@ import shlex
 import subprocess
 import sys
 from pathlib import Path
+from private_state import safe
 
 BASE = Path(__file__).resolve().parent.parent
 
@@ -31,7 +32,7 @@ def main(argv=None):
     for src in (BASE / 'templates/vault').rglob('*'):
         if not src.is_file():
             continue
-        dst = vault / src.relative_to(BASE / 'templates/vault')
+        dst = safe(vault / src.relative_to(BASE / 'templates/vault'))
         dst.parent.mkdir(parents=True, exist_ok=True)
         if dst.is_symlink():
             raise ValueError('Arquivo privado é symlink; recusado.')

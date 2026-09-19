@@ -3,11 +3,11 @@ import fcntl
 import hashlib
 import os
 import tempfile
+from private_state import safe
 
 
 def append_once(path, text, message_id):
-    if path.is_symlink() or any(p.is_symlink() for p in path.parents):
-        raise ValueError('Destino de captura contém symlink')
+    path = safe(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     lock = path.with_suffix(path.suffix + '.lock')
     if lock.is_symlink():

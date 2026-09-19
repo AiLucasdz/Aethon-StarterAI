@@ -1,15 +1,8 @@
 #!/usr/bin/env python3
-"""Hook de gateway: decide o que fazer com a primeira mensagem de um dono novo.
+"""Interface de onboarding chamada pelo agente conforme a instrução no SOUL.
 
-Integracao com o Hermes: o AGENTS.md da instalacao instrui o agente a chamar
-este script ANTES de responder, sempre que o estado de onboarding existir e
-nao estiver concluido.
-
-Saidas:
-    ONBOARDING_ATIVO <chave>   -> agente deve fazer a pergunta (texto apos a chave)
-    ONBOARDING_CONCLUIDO       -> agente remove o hook do fluxo e responde normal
-
-O agente NUNCA improvisa as perguntas: usa a saida deste script.
+Não é callback nativo nem bloqueia pedidos fora do onboarding.
+Saídas: ONBOARDING_ATIVO <chave> ou ONBOARDING_CONCLUIDO.
 """
 import json
 import os
@@ -28,9 +21,7 @@ def main() -> int:
         print("ONBOARDING_CONCLUIDO")
         return 0
 
-    st = json.loads(STATE.read_text())
-
-    # Mensagem e resposta ao onboarding? (o agente passa via stdin ou --responder)
+    # Mensagem e resposta ao onboarding? (o agente passa via --responder)
     args = sys.argv[1:]
     if len(args) >= 2 and args[0] in {"--responder", "--pular"}:
         r = subprocess.run(
