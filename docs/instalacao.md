@@ -10,7 +10,7 @@
 1. Contratar VPS (recomendação: KVM 1 — [Hostinger, link de indicação](https://www.hostinger.com/br?REFERRALCODE=O23ELLUCA0ZD))
 2. Acessar por SSH
 3. Instalar o Hermes Agent (mecanismo oficial: https://hermes-agent.nousresearch.com/docs)
-4. Configurar modelo no OpenRouter (GLM ou DeepSeek — confira IDs/preços atuais em https://openrouter.ai/models)
+4. Escolher um modelo/provedor compatível com Hermes. GLM e DeepSeek no OpenRouter são recomendações iniciais, não opções exclusivas; confira suporte e custos atuais em https://openrouter.ai/models
 5. Criar o bot no BotFather e conectar o Telegram
 
 ## Depois do vídeo

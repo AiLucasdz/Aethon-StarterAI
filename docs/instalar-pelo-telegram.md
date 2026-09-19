@@ -22,7 +22,11 @@ O vídeo de VPS, instalação do Hermes e conexão ao Telegram será incluído d
    ambiente. O comando cria apenas arquivos ausentes, prepara o onboarding e
    instala a base gerenciada com backup local dos arquivos migrados. Não instala
    serviços, não conecta contas e não altera a configuração do Hermes.
-5. Confira o código de saída e execute `python3 scripts/migrar.py --status` com
+5. Instale também as skills distribuídas conforme `docs/skills.md`, no mesmo
+   `HERMES_HOME`. Use o gerenciador nativo, preserve versões/personalizações
+   existentes e valide a descoberta pelo Hermes. Não carregue a skill inteira
+   no SOUL: ela é consultada sob demanda.
+   Confira o código de saída e execute `python3 scripts/migrar.py --status` com
    o mesmo ambiente. Em caso de erro, informe a causa e corrija antes de anunciar
    instalação concluída. Não remova personalizações para contornar conflitos.
 6. Execute `python3 scripts/gateway_hook.py` e apresente a pergunta retornada

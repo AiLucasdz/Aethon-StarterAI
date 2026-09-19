@@ -8,7 +8,9 @@ real de usuário pertence aqui.
 
 1. **Nunca** commite dados reais de usuário: nomes, tokens, chaves, contas,
    IDs de canal, memórias, conversas. A revisão deve cobrir histórico do git,
-   arquivos ocultos e artefatos — .gitignore não é suficiente.
+   arquivos ocultos e artefatos — .gitignore não é suficiente. A autoria pública
+   autorizada do mantenedor deve ser preservada, preferindo o e-mail noreply
+   associado à conta GitHub; não substituir seu crédito por identidade genérica.
 2. **Nunca** copie arquivos de uma instalação pessoal para cá. Reaproveite por
    seleção e generalização explícita (ex.: caminhos absolutos de usuário → caminho configurável).
 3. O onboarding começa sempre pelo **nome do agente** e depois **quem é o dono**

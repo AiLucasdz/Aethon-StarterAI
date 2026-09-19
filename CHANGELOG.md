@@ -1,5 +1,14 @@
 # Alterações
 
+## Não lançado — apresentação e diagramas
+
+- README orientado a empreendedores, empresários, profissionais e uso pessoal,
+  com exemplos concretos; modelos recomendados não restringem a escolha.
+- Diagrama de arquitetura público em PNG e HTML, com fonte JSON reproduzível.
+- Archify no fluxo de instalação via Hermes, descoberta sob demanda e respeito
+  ao scanner; exceções exigem revisão e autorização, sem liberação automática.
+- Autoria pública do mantenedor preservada com e-mail GitHub noreply.
+
 ## Não lançado — revisão de organização e privacidade
 
 - README reorganizado com fluxo de início, fontes privadas, memória, limites de

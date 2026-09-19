@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Seu contexto, pronto para a próxima decisão",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1120,
+      640
+    ],
+    "legend": {
+      "mode": "hidden"
+    }
+  },
+  "components": [
+    {
+      "id": "conversa",
+      "type": "frontend",
+      "label": "Você no Telegram",
+      "sublabel": "Ideias, pedidos e decisões",
+      "pos": [
+        40,
+        270
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "agente",
+      "type": "backend",
+      "label": "Seu agente · Hermes",
+      "sublabel": "Entende, consulta e age",
+      "pos": [
+        420,
+        270
+      ],
+      "size": [
+        240,
+        80
+      ]
+    },
+    {
+      "id": "modelo",
+      "type": "cloud",
+      "label": "Modelo à sua escolha",
+      "sublabel": "OpenRouter ou outro provedor",
+      "pos": [
+        820,
+        270
+      ],
+      "size": [
+        260,
+        80
+      ]
+    },
+    {
+      "id": "arquivos",
+      "type": "database",
+      "label": "Seus arquivos",
+      "sublabel": "Projetos, decisões e lições",
+      "pos": [
+        40,
+        50
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "busca",
+      "type": "database",
+      "label": "GBrain",
+      "sublabel": "Busca o contexto relevante",
+      "pos": [
+        420,
+        50
+      ],
+      "size": [
+        240,
+        80
+      ]
+    },
+    {
+      "id": "honcho",
+      "type": "external",
+      "label": "Honcho · opcional",
+      "sublabel": "Continuidade entre conversas",
+      "pos": [
+        420,
+        510
+      ],
+      "size": [
+        240,
+        80
+      ]
+    },
+    {
+      "id": "conexoes",
+      "type": "external",
+      "label": "Conexões escolhidas",
+      "sublabel": "Agenda, tarefas, reuniões…",
+      "pos": [
+        820,
+        510
+      ],
+      "size": [
+        260,
+        80
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "conversa",
+      "to": "agente",
+      "label": "Conversa",
+      "variant": "emphasis"
+    },
+    {
+      "from": "agente",
+      "to": "modelo",
+      "label": "Raciocínio",
+      "variant": "emphasis"
+    },
+    {
+      "from": "agente",
+      "to": "busca",
+      "label": "Recuperação"
+    },
+    {
+      "from": "busca",
+      "to": "arquivos",
+      "label": "Referências"
+    },
+    {
+      "from": "agente",
+      "to": "honcho",
+      "label": "Se aceito",
+      "variant": "dashed",
+      "labelDy": 65
+    },
+    {
+      "from": "agente",
+      "to": "conexoes",
+      "label": "Ferramentas",
+      "variant": "dashed"
+    }
+  ]
+}
