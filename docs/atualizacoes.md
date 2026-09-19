@@ -2,12 +2,15 @@
 
 ## Pelo Telegram ou conversa com o agente
 
-Ao concluir a instalação, o agente informa: “O template pode receber melhorias.
-Uma vez por semana, você pode pedir: **verifique e atualize meu agente pelo template**.
-Eu confiro as mudanças, preservo suas personalizações e valido o resultado.”
+Ao concluir a instalação, o agente configura uma consulta **a cada sete dias** e
+informa: “Vou conferir melhorias do template semanalmente e avisar aqui quando
+houver atualização pendente. Para aplicar, diga: **verifique e atualize meu agente
+pelo template**.” Não prometa lançamentos semanais.
 
-Não é promessa de lançamento semanal. Não há timer de consulta instalado por
-esse aviso. O dono não precisa operar Git nem reinstalar o agente.
+A consulta usa script no cron nativo do Hermes, **sem LLM**, sem merge, sem migração
+e sem alterar arquivos de trabalho. Sem novidade, não envia mensagem. Havendo
+atualização ainda não aplicada, lembra no ciclo semanal. Falhas de rede ficam no
+histórico local do cron; não viram mensagem falsa de que está atualizado.
 
 - **“Tem atualização do template?”**: consultar o repositório original verificado,
   comparar a revisão instalada com a disponível e resumir mudanças/pendências,
@@ -21,6 +24,37 @@ esse aviso. O dono não precisa operar Git nem reinstalar o agente.
 Atualizar o template não equivale a atualizar Hermes ou trocar modelo de conversa,
 STT, provider, credenciais ou conexões personalizadas. Nunca copiar dados de outra
 instalação para resolver conflito.
+
+## Instalar a consulta semanal
+
+Depois da preparação principal e antes de encerrar o onboarding, no mesmo perfil:
+
+```bash
+python3 scripts/ativar-atualizacoes.py --telegram-owner ID_CONFIRMADO_NO_DM
+```
+
+O agente resolve o ID pelo remetente da conversa privada, sem pedir token ou
+usar ID de grupo. Pode indicar `--hermes CAMINHO` para o executável do perfil.
+O script cria `aethon-atualizacoes-semanais`, intervalo de sete dias desde a
+instalação, `--no-agent`, destino Telegram explícito e falhas somente locais.
+Consulta somente o repositório oficial; não segue uma troca arbitrária de remote.
+
+Reexecução preserva job existente, inclusive pausa e destino; não cria duplicata.
+Se já houver job, verificar `hermes cron list --all`, script, destino e estado
+antes de anunciar que está ativo. Usar comandos nativos para ajustes autorizados.
+Se faltarem `--no-agent`, scheduler funcional ou Telegram, informar pendência;
+não substituir por chamadas semanais ao modelo nem por um daemon novo.
+
+Validar o script (`python3 scripts/verificar-atualizacoes.py`), cadastro e
+`hermes cron status`. Saída vazia é normal quando não há novidade. Confirmar
+entrega quando houver aviso real; job cadastrado não comprova entrega. Não
+fabricar atualização nem enviar mensagem de teste para comprovar funcionamento.
+Em instalação só por CLI, o aviso Telegram fica pendente até existir DM confirmado.
+
+Para desativar, o dono pode dizer “pare os avisos de atualização”; o agente executa
+`hermes cron pause ID_DO_JOB` e confirma o estado. Para retomar, usa `resume`.
+Uma atualização do template não reativa uma pausa. Não instalar essa rotina em
+instalações antigas por migração silenciosa; configurar quando o dono solicitar.
 
 ## Execução pelo agente
 

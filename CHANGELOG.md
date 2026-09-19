@@ -1,5 +1,12 @@
 # Alterações
 
+## Não lançado — aviso semanal sem LLM
+
+- Consulta do repositório oficial a cada sete dias pelo cron nativo; silêncio
+  sem novidade e aviso Telegram quando houver atualização pendente.
+- Instalação idempotente preserva pausas; aplicação continua dependendo de pedido.
+- Verificação não faz merge nem migração e não chama modelo de IA.
+
 ## Não lançado — atualização por conversa
 
 - Encerramento do onboarding ensina o pedido de atualização pelo Telegram e a

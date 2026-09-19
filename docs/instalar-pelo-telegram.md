@@ -91,10 +91,12 @@ arquivos já preparados. Skills e contas opcionais não atrasam essa sequência.
    registre a escolha com `scripts/modulos.py`; isso registra intenção, sem
    conectar contas ou agendar tarefas. Implemente e teste cada escolha antes de
    declarar funcionamento. Não bloqueie o uso esperando integrações opcionais.
-12. Ao encerrar a instalação, ensine uma vez o pedido: “Verifique e atualize meu
-   agente pelo template”. Explique que o dono pode pedir semanalmente, pois novas
-   melhorias podem surgir. Siga `docs/atualizacoes.md`; não diga que existe consulta
-   automática nem prometa lançamentos semanais. O agente executa a atualização.
+12. Antes de encerrar, execute `python3 scripts/ativar-atualizacoes.py
+   --telegram-owner ID` no perfil confirmado. Siga `docs/atualizacoes.md` para
+   validar o scheduler e destino. É uma consulta a cada sete dias, sem LLM;
+   havendo atualização pendente, avisa no DM. Não aplica mudanças sozinha.
+   Explique o pedido “Verifique e atualize meu agente pelo template” e como
+   parar os avisos. Falta de suporte/Telegram é pendência, não rotina ativa.
 
 ## Prova da instalação
 

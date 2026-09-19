@@ -68,10 +68,11 @@ informe só essa pendência; não repita a escolha do nome.
 
 ## Opcionais e conclusão
 
-Ao terminar, explique uma vez: melhorias podem chegar ao template; semanalmente,
-o dono pode pedir **“Verifique e atualize meu agente pelo template”**. O agente
-executa o [fluxo de atualização](atualizacoes.md), sem exigir comandos do dono.
-Isso não instala uma rotina automática nem garante novidades toda semana.
+Ao terminar, configure a consulta semanal sem LLM pelo [guia de atualização](atualizacoes.md).
+Confirme cadastro, scheduler e destino e explique: o agente avisa quando houver
+atualização pendente; para aplicar, diga **“Verifique e atualize meu agente pelo template”**.
+O dono também pode pedir “pare os avisos de atualização”. Sem lançamentos semanais
+prometidos e sem aplicação automática. Se não configurado, informe a pendência.
 
 Backup não é pergunta do onboarding; configurar somente se pedido. Serviços
 externos e rotinas ficam para quando forem solicitados, sem uma lista de ofertas

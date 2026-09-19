@@ -140,10 +140,11 @@ de comandos. Runtime e vault ficam fora do checkout. Telegram, modelo, Honcho e
 outros serviços podem processar conteúdo conforme sua configuração; armazenamento
 local não significa processamento exclusivamente local. Leia [privacidade](docs/privacidade.md).
 
-Para acompanhar melhorias, você pode pedir semanalmente no Telegram:
-**“Verifique e atualize meu agente pelo template.”** O agente executa o processo;
-não é preciso reinstalar. Essa consulta não é automática nem exige novidades
-toda semana. Para apenas consultar, diga **“Tem atualização do template?”**
+Na instalação, o agente configura uma **verificação semanal sem uso de LLM**.
+Quando houver atualização pendente, avisa no Telegram; sem novidade, fica em silêncio.
+Para aplicar, diga **“Verifique e atualize meu agente pelo template.”**
+A consulta não aplica mudanças sozinha. Para consultar antes, diga **“Tem atualização
+do template?”**; para desligar os avisos, **“pare os avisos de atualização”**.
 
 [Atualizações](docs/atualizacoes.md) preservam personalizações e recusam conflitos
 no bloco gerenciado. **Backup nativo do Hermes não cobre o vault nem a base
