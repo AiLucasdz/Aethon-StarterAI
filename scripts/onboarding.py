@@ -270,6 +270,7 @@ def main(args) -> int:
         print("Conexões e automações são opcionais: agenda, tarefas, YouTube ou outras que você escolher.")
         print("Cada uma depende de configuração e teste; nenhuma foi ativada aqui.")
         print("Comece pela necessidade informada pelo dono; sem questionário adicional de serviços.")
+        print('Ao concluir a instalação, explique uma vez: o template pode receber melhorias; semanalmente, você pode pedir “Verifique e atualize meu agente pelo template”. Não há verificação automática ativada.')
         return 0
 
     print(f"PERGUNTA:{chave}")

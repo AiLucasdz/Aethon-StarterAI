@@ -1,5 +1,12 @@
 # Alterações
 
+## Não lançado — atualização por conversa
+
+- Encerramento do onboarding ensina o pedido de atualização pelo Telegram e a
+  possibilidade de consulta semanal, sem anunciar um timer inexistente.
+- Base gerenciada aponta para o guia de atualização e distingue consultar de
+  aplicar, preservando dados, personalizações e escolhas de runtime.
+
 ## Não lançado — preparação antes da apresentação
 
 - Pastas, arquivos privados, GBrain e configuração de áudio preparados antes

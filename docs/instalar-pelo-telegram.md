@@ -91,6 +91,10 @@ arquivos já preparados. Skills e contas opcionais não atrasam essa sequência.
    registre a escolha com `scripts/modulos.py`; isso registra intenção, sem
    conectar contas ou agendar tarefas. Implemente e teste cada escolha antes de
    declarar funcionamento. Não bloqueie o uso esperando integrações opcionais.
+12. Ao encerrar a instalação, ensine uma vez o pedido: “Verifique e atualize meu
+   agente pelo template”. Explique que o dono pode pedir semanalmente, pois novas
+   melhorias podem surgir. Siga `docs/atualizacoes.md`; não diga que existe consulta
+   automática nem prometa lançamentos semanais. O agente executa a atualização.
 
 ## Prova da instalação
 

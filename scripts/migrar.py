@@ -87,6 +87,7 @@ def apply():
         '{{VAULT_AGENTS}}': str(vault / 'AGENTS.md'),
         '{{MEMORY_RULES}}': str(BASE / 'agent/memoria.md'),
         '{{BRAIN_GUIDE}}': str(BASE / 'docs/segundo-cerebro.md'),
+        '{{UPDATE_GUIDE}}': str(BASE / 'docs/atualizacoes.md'),
     }.items():
         body = body.replace(key, value)
     onboarding = read(root / 'state/onboarding.json', {})

@@ -68,6 +68,11 @@ informe só essa pendência; não repita a escolha do nome.
 
 ## Opcionais e conclusão
 
+Ao terminar, explique uma vez: melhorias podem chegar ao template; semanalmente,
+o dono pode pedir **“Verifique e atualize meu agente pelo template”**. O agente
+executa o [fluxo de atualização](atualizacoes.md), sem exigir comandos do dono.
+Isso não instala uma rotina automática nem garante novidades toda semana.
+
 Backup não é pergunta do onboarding; configurar somente se pedido. Serviços
 externos e rotinas ficam para quando forem solicitados, sem uma lista de ofertas
 obrigatória. Honcho pode ser hospedado externamente ou pelo dono: custos e destino
