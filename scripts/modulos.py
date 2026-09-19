@@ -34,3 +34,20 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+def registrar_intencao(st: dict) -> None:
+    """Registra a intenção do segundo cérebro no estado de módulos.
+
+    Não instala nada: só marca 'solicitado' para gbrain e honcho, seguindo o
+    mesmo contrato de conexões — o agente implementa e verifica cada camada
+    depois, com as credenciais do dono.
+    """
+    path = home() / 'state' / 'modulos.json'
+    with locked():
+        state = read(path, {'schema': 1, 'conexoes': {}, 'rotinas': {}})
+        if state.get('schema') != 1:
+            raise ValueError('Versão de estado não suportada; atualize a base.')
+        for mod in ('gbrain', 'honcho'):
+            state['conexoes'].setdefault(mod, {'desejado': 'solicitado'})
+        write(path, state)

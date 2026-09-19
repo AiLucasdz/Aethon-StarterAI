@@ -51,6 +51,17 @@ GITHUB_MSG = (
     "fluxo seguro do GitHub. Esta escolha não cria repositório nem ativa backup."
 )
 
+# Segundo cérebro: GBrain + Honcho, ambos opcionais e desligados por padrão.
+BRAIN_MSG = (
+    "Quer que eu funcione como segundo cérebro completo (GBrain + Honcho)?\n"
+    "GBrain: conhecimento com relações e busca com fontes, roda no seu servidor "
+    "(precisa de Bun e de uma chave de embeddings, com custo próprio).\n"
+    "Honcho: contexto conversacional entre sessões (conta própria em app.honcho.dev).\n"
+    "Responda 'sim' ou 'pular'. Nada é instalado por esta resposta; a instalação "
+    "é feita passo a passo depois, com verificação. Sem isso, eu funciono com "
+    "vault + memória nativa. Guia: docs/segundo-cerebro.md"
+)
+
 
 def carregar_estado() -> dict:
     if STATE.exists():
@@ -82,6 +93,8 @@ def proxima_pendente(st: dict):
                 BOT_MSG.replace("{nome}", st.get("nome", "assistente")))
     if "github_token" not in st:
         return "github_token", GITHUB_MSG
+    if "segundo_cerebro" not in st:
+        return "segundo_cerebro", BRAIN_MSG
     return None, None
 
 
@@ -173,7 +186,8 @@ def main() -> int:
 
     elif args.responder:
         chave, resposta = args.responder
-        chaves_validas = {c for c, _ in PERGUNTAS} | {"github_token", "bot_telegram"}
+        chaves_validas = {c for c, _ in PERGUNTAS} | {"github_token", "bot_telegram",
+                                                      "segundo_cerebro"}
         if chave not in chaves_validas:
             print(f"chave invalida: {chave}")
             return 1
@@ -188,6 +202,15 @@ def main() -> int:
                 print("ERRO: use sim ou pular. Não envie credenciais.")
                 return 1
             st[chave] = "solicitado" if answer in {"sim", "yes"} else "(pulado)"
+        elif chave == "segundo_cerebro":
+            answer = resposta.strip().lower()
+            if answer not in PULAR | {"sim", "yes"}:
+                print("ERRO: use sim ou pular.")
+                return 1
+            st[chave] = "solicitado" if answer in {"sim", "yes"} else "(pulado)"
+            if st[chave] == "solicitado":
+                from modulos import registrar_intencao
+                registrar_intencao(st)
         else:
             if chave == "fuso" and resposta.strip().lower() not in PULAR:
                 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError

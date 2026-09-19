@@ -43,7 +43,7 @@ class Lifecycle(unittest.TestCase):
         self.run_script('gateway_hook.py', '--responder', 'nome', 'Aurora')
         self.assertIn('dono_nome', self.run_script('gateway_hook.py').stdout)
         for key in ['dono_nome', 'dono_faz', 'dono_desejos', 'dono_limites', 'estilo',
-                    'fuso', 'bot_telegram', 'github_token']:
+                    'fuso', 'bot_telegram', 'github_token', 'segundo_cerebro']:
             result = self.run_script('gateway_hook.py', '--pular', key)
         self.assertIn('ONBOARDING_CONCLUIDO', result.stdout)
         self.assertIn('Aurora', soul.read_text())

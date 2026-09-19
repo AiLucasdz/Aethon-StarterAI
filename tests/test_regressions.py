@@ -41,6 +41,8 @@ class Regression(unittest.TestCase):
         self.run_script('gateway_hook.py','--pular','bot_telegram')
         self.run_script('gateway_hook.py','--responder','github_token','ghp_'+'x'*30,ok=False)
         r=self.run_script('gateway_hook.py','--responder','github_token','sim')
+        self.run_script('gateway_hook.py','--pular','segundo_cerebro')
+        r=self.run_script('gateway_hook.py')
         self.assertIn('ONBOARDING_CONCLUIDO',r.stdout)
         self.assertIn('não configurado',r.stdout)
         self.assertNotIn('{{',soul.read_text())
