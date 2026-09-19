@@ -1,0 +1,15 @@
+
+# dados locais nunca versionados
+.env
+*.token
+credentials/
+memories/
+state/
+logs/
+*.sqlite
+*.sqlite-*
+backup-*
+
+# pessoal
+soul-final.md
+usuario-real/
