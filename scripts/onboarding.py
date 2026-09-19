@@ -241,6 +241,8 @@ def main() -> int:
         print("ONBOARDING_CONCLUIDO")
         print("Identidade configurada. Segundo cérebro é a função padrão; confira a instalação do GBrain e a recuperação antes de anunciar pronto.")
         print(f"Backup do vault: {backup}")
+        if st.get('honcho') == 'solicitado':
+            print("Etapa Honcho: continue pelo ativar-memoria.py no mesmo perfil; autenticação e validação fazem parte desta instalação.")
         print("Conexões e automações são opcionais: agenda, tarefas, YouTube ou outras que você escolher.")
         print("Cada uma depende de configuração e teste; nenhuma foi ativada aqui.")
         print("Quer configurar alguma agora, criar outra automação ou prefere me usar já?")

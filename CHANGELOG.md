@@ -1,6 +1,15 @@
 # Alterações
 
-## Não lançado — segundo cérebro como função padrão
+## Não lançado — iniciar e configurar Honcho no mesmo fluxo
+
+- “Iniciar”, “começar”, “configurar” e “instalar” autorizam o mesmo fluxo quando
+  associados ao repositório; não exigir palavra específica nem nova confirmação.
+- Instalador de memória passa a executar a etapa Honcho escolhida no onboarding:
+  wizard nativo em terminal interativo, retomada segura sem terminal, recusa
+  respeitada e providers existentes preservados. Estado não confunde configuração
+  com recuperação/gravação validadas; nenhuma credencial no comando ou no chat.
+
+## Segundo cérebro como função padrão
 
 - GBrain incluído na instalação: base privada sem chave, busca textual, importação
   inicial e MCP nativo; novas dependências fixadas em GBrain v0.46.12.3,

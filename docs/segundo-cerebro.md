@@ -61,11 +61,16 @@ restrita a `world`, esse escopo permite acesso aos consumidores da mesma base.
 Não torna dados públicos na internet. Confira isolamento antes de usá-lo; não
 promova registros anteriores em lote. Ver [contrato de memória](../agent/memoria.md).
 
-## Honcho oferecido no onboarding
+## Honcho integrado à instalação, com recusa no onboarding
 
 O onboarding pergunta se pode configurar Honcho, explica serviço externo/custo
 sem pedir chave e aceita recusa. Com aceitação, o agente deve executar o setup,
-não apenas anotar intenção. Se já houver configuração, validar e preservar.
+não apenas anotar intenção. `ativar-memoria.py` executa essa etapa: em terminal
+interativo abre `hermes memory setup honcho`; sem terminal informa a autenticação
+pendente e o comando para continuar com segurança. Se Honcho já for o provider,
+preserva a configuração e exige validação. Outro provider gera conflito explícito,
+sem sobrescrita. A recusa não executa o setup nem remove configuração existente.
+O estado da etapa fica em `state/aethon-memory/honcho.json` (sem segredos).
 
 1. Use `hermes memory setup honcho` no terminal seguro para credenciais do dono.
    Sem interação segura disponível, explique o único passo externo necessário e

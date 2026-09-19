@@ -1,14 +1,46 @@
 #!/usr/bin/env python3
-"""Instala recuperação no Hermes existente, sem conectar serviços ou trocar modelo."""
+"""Instala GBrain/recuperação e configura Honcho quando aceito, preservando o modelo."""
 import argparse
 import json
 import os
 from pathlib import Path
 import shutil
+import shlex
 import subprocess
+import sys
 import uuid
 
-from private_state import BASE, atomic, home, locked, safe
+from private_state import BASE, atomic, home, locked, read, safe, write
+
+
+def configurar_honcho(binary, root, env, choice):
+    """Etapa da instalação; recusa não altera provider nem credenciais existentes."""
+    if choice != 'solicitado':
+        return {'estado': 'recusado' if choice == '(pulado)' else 'aguardando_escolha'}
+    current = subprocess.run([binary, 'config', 'get', 'memory.provider', '--json'],
+                             env=env, capture_output=True, text=True, timeout=45)
+    if current.returncode:
+        if 'Config key not set: memory.provider' not in current.stdout + current.stderr:
+            raise RuntimeError('Não foi possível conferir o provider; Honcho pendente, sem sobrescrever configuração.')
+        provider = None
+    else:
+        provider = json.loads(current.stdout)
+    if provider == 'honcho':
+        return {'estado': 'existente_validacao_pendente'}
+    if provider not in (None, '', 'none', 'local'):
+        return {'estado': 'conflito_provider', 'acao': 'Revisar troca do provider existente com o dono.'}
+    command = [binary, 'memory', 'setup', 'honcho']
+    if not (sys.stdin.isatty() and sys.stdout.isatty()):
+        return {'estado': 'autenticacao_pendente', 'comando_terminal': shlex.join(
+            ['env', f'HERMES_HOME={root}', *command])}
+    # Wizard nativo: OAuth/device code ou entrada protegida, sem chaves em argv.
+    result = subprocess.run(command, env=env, timeout=900)
+    if result.returncode:
+        return {'estado': 'setup_incompleto'}
+    after = subprocess.run([binary, 'config', 'get', 'memory.provider', '--json'],
+                           env=env, capture_output=True, text=True, timeout=45)
+    enabled = after.returncode == 0 and json.loads(after.stdout) == 'honcho'
+    return {'estado': 'configurado_validacao_pendente' if enabled else 'setup_incompleto'}
 
 
 def main():
@@ -100,6 +132,19 @@ def main():
         print('Telegram exige owner_id configurado e DM confirmado; grupos não recebem contexto privado.')
         print('GBrain incluído: base nova começa sem embeddings/API; configuração existente é preservada.')
         print('Valide remember/recall pelo MCP do agente. Cadastro não comprova conexão nem busca semântica.')
+    # Fora do lock: autenticação pode aguardar interação do dono.
+    onboarding = read(root / 'state/onboarding.json', {})
+    choice = onboarding.get('honcho', onboarding.get('segundo_cerebro'))
+    honcho = configurar_honcho(binary, root, env, choice)
+    with locked():
+        write(root / 'state/aethon-memory/honcho.json', honcho)
+    print('Honcho: ' + honcho['estado'])
+    if honcho.get('comando_terminal'):
+        print('Continue a etapa de autenticação no terminal seguro: ' + honcho['comando_terminal'])
+        print('O agente pode conduzir OAuth/device code por PTY e mostrar o link; nunca pedir API key no chat.')
+    if honcho.get('acao'):
+        print(honcho['acao'])
+    print('Só confirmar Honcho após verificar identidade, contexto no consumidor e gravações separadamente.')
 
 
 if __name__ == '__main__':

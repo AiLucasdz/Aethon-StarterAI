@@ -1,6 +1,7 @@
 # Instalação pelo agente já conectado ao Telegram
 
-O dono envia o link deste repositório ao seu Hermes e pede a instalação. Não é
+O dono envia o link deste repositório ao seu Hermes e pede para iniciar, começar,
+configurar o agente ou instalar. Esses pedidos iniciam o mesmo fluxo. Não é
 necessário criar outro bot, trocar o modelo ou refazer o pareamento existente.
 O vídeo de VPS, instalação do Hermes e conexão ao Telegram será incluído depois.
 
@@ -8,7 +9,8 @@ O vídeo de VPS, instalação do Hermes e conexão ao Telegram será incluído d
 
 1. Inspecione o repositório solicitado e suas instruções. Um link isolado não é
    autorização inequívoca para instalar: nesse caso pergunte se a pessoa quer
-   a instalação. Se ela já pediu, prossiga sem repetir a confirmação.
+   o uso/configuração. Se ela pediu “iniciar”, “começar”, “configurar” ou “instalar”,
+   inclusive em continuação do contexto, prossiga sem repetir a confirmação.
 2. Clone a base num diretório próprio, separado do runtime, vault e backups.
    Preserve checkout existente e alterações locais. Não copie dados de outra
    instalação e não envie credenciais ou arquivos privados ao Git público.
@@ -41,7 +43,15 @@ O vídeo de VPS, instalação do Hermes e conexão ao Telegram será incluído d
 9. Ao concluir, ofereça uso imediato ou configuração opcional. Agenda, Tasks e
    YouTube são exemplos independentes. Novas automações também podem ser pedidas.
    Honcho é oferecido durante o onboarding: aceitação inicia o setup nativo
-   seguro; recusa mantém GBrain e a função de segundo cérebro. Valide contexto
+   seguro como etapa desta instalação. Após a resposta, execute novamente
+   `ativar-memoria.py` no mesmo perfil: ele respeita recusa, preserva provider
+   Honcho existente e abre o wizard nativo em terminal interativo quando aceito.
+   Em execução sem terminal, retorna `autenticacao_pendente` e o comando exato.
+   Conduza o wizard via PTY/OAuth-device code quando suportado; apresente apenas
+   link/código de autorização. API key só no terminal protegido do dono.
+   Não peça nova autorização para configurar o Honcho já aceito nem encerre
+   dizendo que está pronto quando ainda faltar autenticação. Recusa mantém
+   GBrain e a função de segundo cérebro. Valide contexto
    e escrita; não trate intenção como instalação. Para outros conectores,
    registre a escolha com `scripts/modulos.py`; isso registra intenção, sem
    conectar contas ou agendar tarefas. Implemente e teste cada escolha antes de

@@ -22,7 +22,10 @@ real de usuário pertence aqui.
 
 ## Quando o dono enviar este repositório pelo Telegram
 
-Leia `docs/instalar-pelo-telegram.md` e execute o fluxo autorizado de instalação.
+Pedidos como “iniciar”, “começar”, “configurar meu agente” ou “instalar”, junto
+do repositório ou em continuação desse contexto, autorizam o mesmo fluxo.
+Não exija a palavra “instalação” nem peça confirmação novamente.
+Leia `docs/instalar-pelo-telegram.md` e execute esse fluxo.
 Hermes, modelo e Telegram já estão funcionando nesse cenário. Preserve a
 configuração existente. Comece pelo nome do agente, depois pelo dono. Todos os
 conectores externos e automações são independentes e extensíveis; GBrain é parte
