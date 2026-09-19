@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Onboarding do agente — primeira conversa no Telegram.
 
-Fluxo: nome do agente -> quem e o dono -> preferencias -> fuso ->
-nome do bot Telegram -> backup GitHub -> Honcho (opcionais; perguntas podem ser puladas).
+Fluxo: nome do agente -> apresentação livre -> Honcho opcional.
+O agente organiza texto/áudio/documentos e pergunta apenas informações faltantes.
 
 O agente chama este script pela instrução no SOUL e usa
 o texto de saida. Toda pergunta aceita "pular". Idempotente.
@@ -27,39 +27,24 @@ STATE = HERMES_HOME / "state" / "onboarding.json"
 
 PULAR = {"pular", "depois", "skip", "pula", "não", "nao"}
 
-# As perguntas, em ordem. A PRIMEIRA e sempre o NOME do agente.
+# Nome, apresentação livre e escolha do Honcho. Sem questionário obrigatório.
 PERGUNTAS = [
-    ("nome", "Oi! Sou seu agente pessoal, rodando no SEU servidor.\n"
-             "Antes de tudo: como você quer me chamar?"),
-    ("dono_nome", "Prazer! E como você quer ser chamado?"),
-    ("dono_faz", "O que você faz? (trabalho/projeto principal)"),
-    ("dono_desejos", "O que você mais quer que eu faça por você? (até 3 coisas)"),
-    ("dono_limites", "Tem algo que eu NUNCA devo fazer? (ou 'pular')"),
-    ("estilo", "Como prefere minhas respostas?\n"
-               "1) curtas e diretas  2) com contexto  3) tanto faz"),
-    ("fuso", "Em que fuso você está? (ex.: America/Sao_Paulo)"),
+    ("nome", "Como você quer me chamar?"),
+    ("apresentacao", "Me conta um pouco sobre você e como gostaria que eu te ajudasse.\n\n"
+     "Como prefere ser chamado e como gosta de conversar? Com o que trabalha, "
+     "como é sua rotina e o que é importante para você hoje?\n\n"
+     "Conta também onde está tendo dificuldade: organizar tarefas, cumprir prazos, "
+     "manter hábitos, estudar, cuidar do negócio ou lidar com assuntos pessoais. "
+     "O que você gostaria de ter mais organizado ou acompanhado?\n\n"
+     "Pode incluir sua idade, interesses e preferências, se quiser. Mande um áudio, "
+     "texto, PDF ou resumo de outra IA — não precisa seguir uma ordem nem responder "
+     "tudo. Eu organizo e pergunto depois só o que faltar."),
 ]
-
-BOT_MSG = ("Última coisa: seu bot no Telegram pode ter esse mesmo nome.\n"
-           "No @BotFather: /setname → escolha seu bot → digite: {nome}\n"
-           "(e /setdescription e /setuserpic se quiser)\n"
-           "Feito? Responde 'pronto' — ou 'pular' para fazer depois.")
-
-# Backup GitHub: etapa separada, sempre opcional.
-GITHUB_MSG = (
-    "Quer configurar backup privado depois? Responda 'sim' ou 'pular'. "
-    "Não envie tokens aqui. A autenticação será feita no terminal com o "
-    "fluxo seguro do GitHub. Esta escolha não cria repositório nem ativa backup."
-)
-
-# Segundo cérebro é a função do agente; apenas Honcho admite recusa.
-BRAIN_MSG = (
-    "Seu agente é um segundo cérebro: arquivos, memória nativa e GBrain fazem parte da instalação.\n"
-    "Vou configurar também o Honcho para continuidade entre conversas? Ele usa uma "
-    "conta própria e processa contexto no serviço; pode ter custo. Responda 'sim' "
-    "para configurar com segurança ou 'pular' para recusar. Não envie chaves aqui. "
-    "Isso não desativa o GBrain nem muda a função do agente."
-)
+PERFIL = {'dono_nome', 'dono_faz', 'dono_desejos', 'dono_limites', 'estilo', 'fuso',
+          'idade', 'rotina', 'interesses', 'dificuldades', 'preferencias'}
+BRAIN_MSG = ("Quer adicionar o Honcho para ajudar na continuidade entre conversas? "
+             "Posso configurar e explicar a opção disponível antes de conectar. "
+             "Responda sim ou pular.")
 
 
 def carregar_estado() -> dict:
@@ -88,14 +73,14 @@ def salvar_estado(st: dict) -> None:
 
 
 def proxima_pendente(st: dict):
+    if st.get('_concluido'):
+        return None, None
     for chave, pergunta in PERGUNTAS:
+        # Instalações antigas já podem ter respondido o perfil em perguntas separadas.
+        if chave == 'apresentacao' and any(k in st for k in PERFIL):
+            continue
         if chave not in st:
             return chave, pergunta
-    if "bot_telegram" not in st:
-        return ("bot_telegram",
-                BOT_MSG.replace("{nome}", st.get("nome", "assistente")))
-    if "github_token" not in st:
-        return "github_token", GITHUB_MSG
     if "honcho" not in st:
         return "honcho", BRAIN_MSG
     return None, None
@@ -154,6 +139,12 @@ def preencher_artefatos(st: dict) -> None:
             "{{DATA}}": date.today().isoformat(),
         }.items():
             texto = texto.replace(k, v)
+        if st.get('apresentacao') not in (None, '(pulado)'):
+            fields = {k: st[k] for k in sorted(PERFIL) if st.get(k) not in (None, '', '(pulado)')}
+            if fields and '<!-- aethon-perfil -->' not in texto:
+                texto += ('\n<!-- aethon-perfil -->\n## Perfil organizado\n\n'
+                          'Origem: [apresentação do dono](apresentacao.md).\n\n'
+                          + json.dumps(fields, ensure_ascii=False, indent=2) + '\n<!-- /aethon-perfil -->\n')
         perfil.write_text(texto)
         perfil.chmod(0o600)
 
@@ -169,15 +160,42 @@ def parse_args():
     p.add_argument("--iniciar", action="store_true", help="retorna a proxima pergunta")
     p.add_argument("--responder", nargs=2, metavar=("CHAVE", "RESPOSTA"))
     p.add_argument("--pular", metavar="CHAVE")
+    p.add_argument("--apresentacao-json", metavar="ARQUIVO", help="Texto extraído e perfil organizado pelo agente; arquivo privado JSON")
     return p.parse_args()
 
 
 def main(args) -> int:
     import re
-    if args.responder and re.search(r"(?:ghp_|github_pat_|sk-or-v1-)[A-Za-z0-9_\-]{12,}", args.responder[1]):
+    st = carregar_estado()
+    organized = None
+    if args.apresentacao_json:
+        if args.responder or args.pular or proxima_pendente(st)[0] != 'apresentacao':
+            raise ValueError('Apresentação fora da etapa atual ou argumentos conflitantes')
+        organized = json.loads(safe(args.apresentacao_json).read_text())
+        if not isinstance(organized, dict) or set(organized) - {'texto', 'perfil', 'origem'}:
+            raise ValueError('Use texto, perfil e origem')
+        text = organized.get('texto')
+        fields = organized.get('perfil', {})
+        origin = organized.get('origem', 'mensagem do dono')
+        if not isinstance(text, str) or not text.strip() or len(text) > 50000:
+            raise ValueError('Texto extraído vazio/inválido ou maior que 50000 caracteres')
+        if not isinstance(origin, str) or len(origin) > 500:
+            raise ValueError('Origem inválida')
+        if not isinstance(fields, dict) or set(fields) - PERFIL:
+            raise ValueError('Campo de perfil desconhecido')
+        if any(not isinstance(v, str) or len(v) > 1200 for v in fields.values()) or len(json.dumps(fields)) > 8000:
+            raise ValueError('Valores do perfil precisam ser textos curtos')
+        if fields.get('fuso'):
+            from zoneinfo import ZoneInfo
+            ZoneInfo(fields['fuso'])
+        args.responder = ['apresentacao', text]
+    submitted = json.dumps(organized, ensure_ascii=False) if organized else (args.responder[1] if args.responder else '')
+    if re.search(r"(?:ghp_|github_pat_|sk-or-v1-)[A-Za-z0-9_\-]{12,}", submitted):
         print("ERRO: credencial recusada; utilize autenticação no terminal.")
         return 1
-    st = carregar_estado()
+
+    if args.responder and len(args.responder[1]) > (50000 if args.responder[0] == 'apresentacao' else 128):
+        raise ValueError('Resposta muito longa; use material privado com resumo e origem')
 
     if args.iniciar and not st:
         st = {"_ativo": "true"}
@@ -185,10 +203,7 @@ def main(args) -> int:
 
     if args.pular:
         prox, _ = proxima_pendente(st)
-        if args.pular == "github_token" and args.pular == prox:
-            st["github_token"] = "(pulado)"
-            st["github_login"] = "(sem backup)"
-        elif args.pular == prox:
+        if args.pular == prox:
             st[args.pular] = "(pulado)"
         else:
             print(f"ERRO:só é possível pular a pergunta atual ({prox})")
@@ -199,8 +214,7 @@ def main(args) -> int:
 
     elif args.responder:
         chave, resposta = args.responder
-        chaves_validas = {c for c, _ in PERGUNTAS} | {"github_token", "bot_telegram",
-                                                      "honcho"}
+        chaves_validas = {c for c, _ in PERGUNTAS} | {"honcho"}
         if chave not in chaves_validas:
             print(f"chave invalida: {chave}")
             return 1
@@ -209,13 +223,7 @@ def main(args) -> int:
         if chave != prox:
             print(f"ERRO: responda a pergunta atual ({prox})")
             return 1
-        if chave == "github_token":
-            answer = resposta.strip().lower()
-            if answer not in PULAR | {"sim", "yes"}:
-                print("ERRO: use sim ou pular. Não envie credenciais.")
-                return 1
-            st[chave] = "solicitado" if answer in {"sim", "yes"} else "(pulado)"
-        elif chave == "honcho":
+        if chave == "honcho":
             answer = resposta.strip().lower()
             if answer not in PULAR | {"sim", "yes"}:
                 print("ERRO: use sim ou pular.")
@@ -224,15 +232,29 @@ def main(args) -> int:
             from modulos import registrar_intencao
             registrar_intencao(st, already_locked=True)
         else:
-            if chave == "fuso" and resposta.strip().lower() not in PULAR:
-                from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
-                try:
-                    ZoneInfo(resposta.strip())
-                except (ValueError, ZoneInfoNotFoundError):
-                    print("ERRO: fuso inválido; exemplo: America/Sao_Paulo")
-                    return 1
             st = aplicar_resposta(st, chave, "(pulado)" if resposta.strip().lower() in PULAR else resposta)
+        if chave == 'apresentacao' and st[chave] != '(pulado)':
+            from private_state import atomic
+            if organized:
+                st.update({k: v for k, v in organized.get('perfil', {}).items() if v.strip()})
+            origin = organized.get('origem', 'mensagem do dono') if organized else 'mensagem do dono'
+            target = safe(VAULT / '01_IDENTIDADE/apresentacao.md')
+            if target.exists():
+                raise ValueError('Apresentação existente: revise antes de substituir')
+            atomic(target, ('# Apresentação do dono\n\nOrigem: ' + origin + '\n\n' + st[chave] + '\n').encode())
+            st[chave] = str(target)
         salvar_estado(st)
+        if chave == 'nome':
+            # O nome escolhido já identifica o agente durante a configuração.
+            for target in [HERMES_HOME / 'SOUL.md', VAULT / 'AGENTS.md']:
+                target = safe(target)
+                if target.exists():
+                    target.write_text(target.read_text().replace('{{NOME_DO_AGENTE}}',
+                        'assistente' if st[chave] == '(pulado)' else st[chave]))
+            from migrar import apply
+            import contextlib, io
+            with contextlib.redirect_stdout(io.StringIO()):
+                apply()
 
     chave, pergunta = proxima_pendente(st)
     if chave is None:
@@ -240,15 +262,14 @@ def main(args) -> int:
             preencher_artefatos(st)
             st["_concluido"] = True
             salvar_estado(st)
-        backup = "não configurado (solicitação anotada)" if st.get("github_token") == "solicitado" else "não configurado"
         print("ONBOARDING_CONCLUIDO")
         print("Identidade configurada. Segundo cérebro é a função padrão; confira a instalação do GBrain e a recuperação antes de anunciar pronto.")
-        print(f"Backup do vault: {backup}")
+
         if st.get('honcho') == 'solicitado':
             print("Etapa Honcho: continue pelo ativar-memoria.py no mesmo perfil; autenticação e validação fazem parte desta instalação.")
         print("Conexões e automações são opcionais: agenda, tarefas, YouTube ou outras que você escolher.")
         print("Cada uma depende de configuração e teste; nenhuma foi ativada aqui.")
-        print("Quer configurar alguma agora, criar outra automação ou prefere me usar já?")
+        print("Comece pela necessidade informada pelo dono; sem questionário adicional de serviços.")
         return 0
 
     print(f"PERGUNTA:{chave}")

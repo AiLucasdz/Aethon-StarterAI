@@ -55,7 +55,10 @@ def main(argv=None):
                           str(BASE / 'scripts/gateway_hook.py')])
         text += ('\n<!-- onboarding-aethon -->\n## Configuração inicial pendente\n'
                  f'Antes de iniciar a configuração, execute `{cmd}`. '
-                 'Pergunte um item por vez usando a saída. Para responder use --responder CHAVE RESPOSTA, '
+                 'Nome do agente, depois apresentação livre; pergunte só lacunas necessárias. '
+                 f'Para organizar áudio/documento, leia {BASE / "docs/onboarding.md"}. '
+                 'Use --apresentacao-json ARQUIVO_PRIVADO para perfil organizado. '
+                 'Para resposta simples use --responder CHAVE RESPOSTA, '
                  'com argumentos escapados; para pular use --pular CHAVE. '
                  'Nunca passe tokens ou chaves. Se a pessoa pedir ajuda em outro assunto, ajude e retome depois. '
                  'Após ONBOARDING_CONCLUIDO não execute mais este fluxo. '

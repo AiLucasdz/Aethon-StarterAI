@@ -52,9 +52,8 @@ class Lifecycle(unittest.TestCase):
         self.run_script('iniciar.py')
         self.assertEqual(len(self.journals()), 1)
         self.run_script('gateway_hook.py', '--responder', 'nome', 'Aurora')
-        self.assertIn('dono_nome', self.run_script('gateway_hook.py').stdout)
-        for key in ['dono_nome', 'dono_faz', 'dono_desejos', 'dono_limites', 'estilo',
-                    'fuso', 'bot_telegram', 'github_token', 'honcho']:
+        self.assertIn('apresentacao', self.run_script('gateway_hook.py').stdout)
+        for key in ['apresentacao', 'honcho']:
             result = self.run_script('gateway_hook.py', '--pular', key)
         self.assertIn('ONBOARDING_CONCLUIDO', result.stdout)
         self.assertIn('Aurora', soul.read_text())
@@ -102,8 +101,7 @@ class Lifecycle(unittest.TestCase):
         (self.home / 'SOUL.md').write_text('# Hermes\nPreferência fictícia preservada.\n')
         self.run_script('iniciar.py')
         self.run_script('gateway_hook.py', '--responder', 'nome', 'Aurora')
-        for key in ['dono_nome', 'dono_faz', 'dono_desejos', 'dono_limites', 'estilo',
-                    'fuso', 'bot_telegram', 'github_token', 'honcho']:
+        for key in ['apresentacao', 'honcho']:
             self.run_script('gateway_hook.py', '--pular', key)
         soul = (self.home / 'SOUL.md').read_text()
         self.assertIn('Aurora', soul)

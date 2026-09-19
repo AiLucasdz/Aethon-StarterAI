@@ -13,8 +13,9 @@ real de usuário pertence aqui.
    associado à conta GitHub; não substituir seu crédito por identidade genérica.
 2. **Nunca** copie arquivos de uma instalação pessoal para cá. Reaproveite por
    seleção e generalização explícita (ex.: caminhos absolutos de usuário → caminho configurável).
-3. O onboarding começa sempre pelo **nome do agente** e depois **quem é o dono**
-   (ver docs/onboarding.md). Não inverta a ordem nem pule.
+3. O onboarding começa pelo **nome do agente**, seguido de **apresentação livre**
+   por texto/áudio/documento (ver docs/onboarding.md). Organize o que recebeu;
+   não repita um questionário de campos nem peça o nome do bot outra vez.
 4. Conectar conta ≠ ativar rotina. Cada integração exige teste real antes de
    declarar sucesso.
 5. IDs de modelo mudam: antes de editar docs que citam modelo/preço, conferir
@@ -29,7 +30,7 @@ do repositório ou em continuação desse contexto, autorizam o mesmo fluxo.
 Não exija a palavra “instalação” nem peça confirmação novamente.
 Leia `docs/instalar-pelo-telegram.md` e execute esse fluxo.
 Hermes, modelo e Telegram já estão funcionando nesse cenário. Preserve a
-configuração existente. Comece pelo nome do agente, depois pelo dono. Todos os
+configuração existente. Comece pelo nome do agente, depois pela apresentação livre do dono. Todos os
 conectores externos e automações são independentes e extensíveis; GBrain é parte
 da instalação, Honcho é oferecido com possibilidade de recusa. Os exemplos
 do catálogo não limitam o que a pessoa pode pedir.

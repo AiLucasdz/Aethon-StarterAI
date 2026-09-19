@@ -33,18 +33,22 @@ class Regression(unittest.TestCase):
         self.assertEqual(before, profile.read_bytes())
         self.run_script('onboarding.py', '--pular', 'github_token', ok=False)
         self.run_script('onboarding.py', '--responder', 'dono_nome', 'Exemplo', ok=False)
-        for key, answer in [('nome','Estrela'), ('dono_nome','Pessoa fictícia'), ('dono_faz','Estudo'),
-                            ('dono_desejos','Organização'), ('dono_limites','pular'), ('estilo','curtas')]:
-            self.run_script('gateway_hook.py','--responder',key,answer)
-        self.run_script('onboarding.py','--responder','fuso','invalido',ok=False)
-        self.run_script('onboarding.py','--responder','fuso','UTC')
-        self.run_script('gateway_hook.py','--pular','bot_telegram')
-        self.run_script('gateway_hook.py','--responder','github_token','ghp_'+'x'*30,ok=False)
-        r=self.run_script('gateway_hook.py','--responder','github_token','sim')
+        self.run_script('gateway_hook.py', '--responder', 'nome', 'Estrela')
+        source = self.root / 'apresentacao.json'
+        payload = {'texto': 'Pessoa fictícia. Trabalho com estudo e prefiro respostas curtas.',
+                   'origem': 'áudio fictício transcrito',
+                   'perfil': {'dono_nome': 'Pessoa fictícia', 'dono_faz': 'Estudo', 'estilo': 'curtas', 'fuso': 'invalido'}}
+        source.write_text(json.dumps(payload))
+        self.run_script('gateway_hook.py', '--apresentacao-json', str(source), ok=False)
+        payload['perfil']['fuso'] = 'UTC'
+        source.write_text(json.dumps(payload))
+        self.run_script('gateway_hook.py', '--apresentacao-json', str(source))
+        saved = self.root / 'vault/01_IDENTIDADE/apresentacao.md'
+        self.assertIn('áudio fictício transcrito', saved.read_text())
+        self.assertIn('Pessoa fictícia', saved.read_text())
         self.run_script('gateway_hook.py','--pular','honcho')
         r=self.run_script('gateway_hook.py')
         self.assertIn('ONBOARDING_CONCLUIDO',r.stdout)
-        self.assertIn('não configurado',r.stdout)
         self.assertNotIn('{{',soul.read_text())
         self.assertNotIn('onboarding-aethon',soul.read_text())
         self.assertEqual(soul.stat().st_mode & 0o777,0o600)
@@ -52,6 +56,38 @@ class Regression(unittest.TestCase):
         before=soul.read_bytes()
         self.run_script('iniciar.py')
         self.assertEqual(before,soul.read_bytes())
+
+    def test_free_presentation_skips_questionnaire_and_preserves_origin(self):
+        self.run_script('iniciar.py')
+        result = self.run_script('gateway_hook.py', '--responder', 'nome', 'Aurora')
+        self.assertIn('ONBOARDING_ATIVO apresentacao', result.stdout)
+        self.assertIn('Aurora', (self.root/'runtime/SOUL.md').read_text())
+        source = self.root/'input.json'
+        payload = {'texto': 'Exemplo fictício; preciso organizar prazos.',
+                   'origem': 'PDF fictício, página 1',
+                   'perfil': {'dificuldades': 'Organizar prazos', 'preferencias': 'Respostas diretas'}}
+        source.write_text(json.dumps(payload))
+        result = self.run_script('gateway_hook.py', '--apresentacao-json', str(source))
+        self.assertIn('ONBOARDING_ATIVO honcho', result.stdout)
+        self.run_script('gateway_hook.py', '--pular', 'honcho')
+        profile = (self.root/'vault/01_IDENTIDADE/perfil.md').read_text()
+        self.assertIn('Organizar prazos', profile)
+        self.assertIn('apresentacao.md', profile)
+        self.assertIn('ONBOARDING_CONCLUIDO', self.run_script('gateway_hook.py').stdout)
+
+    def test_invalid_presentation_does_not_advance_or_write(self):
+        self.run_script('iniciar.py')
+        self.run_script('gateway_hook.py', '--responder', 'nome', 'Aurora')
+        state = self.root/'runtime/state/onboarding.json'
+        before = state.read_bytes()
+        source = self.root/'input.json'
+        for payload in [{'texto': 'fictício', 'perfil': {'comando': 'não executar'}},
+                        {'texto': '', 'perfil': {}},
+                        {'texto': 'fictício', 'perfil': {'dono_nome': 'ghp_'+'x'*30}}]:
+            source.write_text(json.dumps(payload))
+            self.run_script('gateway_hook.py', '--apresentacao-json', str(source), ok=False)
+            self.assertEqual(state.read_bytes(), before)
+            self.assertFalse((self.root/'vault/01_IDENTIDADE/apresentacao.md').exists())
 
     def test_partial_vault_preserved_and_date_rejected(self):
         p=self.root/'vault/01_IDENTIDADE/perfil.md';p.parent.mkdir(parents=True);p.write_text('não sobrescrever')

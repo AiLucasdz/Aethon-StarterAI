@@ -54,8 +54,7 @@ def main():
             raise RuntimeError('Hermes não confirmou o runtime isolado; teste interrompido.')
         script('iniciar.py')
         script('gateway_hook.py', '--responder', 'nome', 'Aurora')
-        for key in ['dono_nome', 'dono_faz', 'dono_desejos', 'dono_limites', 'estilo',
-                    'fuso', 'bot_telegram', 'github_token', 'honcho']:
+        for key in ['apresentacao', 'honcho']:
             completion = script('gateway_hook.py', '--pular', key)
         if 'ONBOARDING_CONCLUIDO' not in completion:
             raise RuntimeError('Onboarding não concluiu; teste interrompido.')

@@ -1,5 +1,15 @@
 # Alterações
 
+## Não lançado — apresentação livre
+
+- Nome seguido de apresentação por texto, áudio ou documento, organizada pelo
+  agente em lote. Perguntar somente lacunas; removidas perguntas repetidas de
+  perfil, nome do bot e backup. Compatibilidade com estados antigos preservada.
+- Registro privado da apresentação com origem e perfil validado, sem LLM adicional
+  no script. Nome já projetado durante a configuração.
+- Áudio/documentos dependem de extração real; Honcho local e nuvem distinguem
+  custos e dados, sem prometer provisionamento automático de Ollama.
+
 ## Não lançado — configuração executada pelo agente
 
 - Responsabilidade explícita por pastas, caminhos, arquivos, comandos e validação.

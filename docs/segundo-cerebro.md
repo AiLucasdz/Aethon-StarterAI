@@ -63,7 +63,7 @@ promova registros anteriores em lote. Ver [contrato de memória](../agent/memori
 
 ## Honcho integrado à instalação, com recusa no onboarding
 
-O onboarding pergunta se pode configurar Honcho, explica serviço externo/custo
+O onboarding pergunta se pode configurar Honcho; o agente explica o destino dos dados e os custos da modalidade disponível
 sem pedir chave e aceita recusa. Com aceitação, o agente deve executar o setup,
 não apenas anotar intenção. `ativar-memoria.py` executa essa etapa: em terminal
 interativo abre `hermes memory setup honcho`; sem terminal informa a autenticação
@@ -88,3 +88,12 @@ Sem Honcho, o segundo cérebro continua com GBrain, vault e memória nativa.
 Não há sincronização contínua entre camadas nem garantia de captura espontânea:
 a execução segue o contrato e precisa ser observada no uso real. Não são
 ativadas rotinas de enriquecimento ou chamadas de síntese por padrão.
+
+### Hospedagem própria e Ollama
+
+Honcho auto-hospedado e modelos locais podem dispensar cobrança de APIs, mas
+consomem recursos do servidor. A modalidade gerenciada é distinta. Configurar
+Ollama por si só não instala Honcho nem troca seu endpoint. Este template usa
+o setup nativo e não provisiona automaticamente Honcho + Ollama. Confira
+[a documentação oficial](https://github.com/plastic-labs/honcho#self-hosting)
+e valide capacidade/latência antes de mudar a modalidade.

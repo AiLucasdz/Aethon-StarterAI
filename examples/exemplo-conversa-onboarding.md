@@ -1,52 +1,27 @@
-# Exemplo de onboarding — dados fictícios
-
-Cada pergunta ocorre em um turno. A implementação obtém o texto de `onboarding.py`.
+# Conversa fictícia de onboarding
 
 **Agente:** Como você quer me chamar?
 
-**Dona:** Aurora.
+**Pessoa:** Aurora.
 
-**Agente:** Como você quer ser chamada?
+**Aurora:** Me conta um pouco sobre você e como gostaria que eu te ajudasse.
+Como prefere ser chamado e como gosta de conversar? Como é sua rotina, com o
+que trabalha e onde está tendo dificuldade? O que quer organizar ou acompanhar?
+Pode incluir idade, interesses e preferências, se quiser. Mande áudio, texto,
+PDF ou resumo de outra IA — não precisa responder tudo. Eu organizo.
 
-**Dona:** Pessoa Exemplo.
+**Pessoa:** [Áudio fictício] Pode me chamar de Pessoa Exemplo. Trabalho com design,
+quero organizar entregas e prefiro respostas diretas.
 
-**Agente:** O que você faz?
+O agente transcreve de fato, organiza as informações e registra a origem. Não
+pergunta novamente nome, trabalho ou estilo. Não anuncia transcrição se ela falhar.
 
-**Dona:** Trabalho com design.
+**Aurora:** Quer incluir Honcho para ajudar na continuidade entre conversas?
 
-**Agente:** O que você mais quer que eu faça por você?
+**Pessoa:** Pular.
 
-**Dona:** Ajudar a encontrar decisões e organizar projetos.
+**Aurora:** Vamos pelas entregas: o que está pendente e quais prazos você já tem?
 
-**Agente:** Tem algo que eu nunca devo fazer?
-
-**Dona:** Enviar mensagens sem meu pedido.
-
-**Agente:** Como prefere minhas respostas?
-
-**Dona:** Curtas e diretas.
-
-**Agente:** Em que fuso você está?
-
-**Dona:** UTC.
-
-**Agente:** Quer ajustar também o nome do bot no BotFather?
-
-**Dona:** Pular.
-
-**Agente:** Quer configurar backup privado depois? Não envie tokens aqui.
-
-**Dona:** Pular.
-
-**Agente:** GBrain faz parte do agente. Posso configurar também Honcho para
-continuidade entre conversas? Ele processa contexto no serviço e pode ter custo.
-
-**Dona:** Pular.
-
-**Agente:** Identidade configurada; Honcho recusado e backup não configurado.
-Vou concluir a instalação do GBrain e conferir a recuperação no seu perfil.
-Agenda e outras conexões podem ser configuradas depois, quando você pedir.
-
-O agente só anuncia recuperação funcionando após a verificação real. Se faltar
-uma dependência ou recarga do runtime, informa a etapa pendente. Se Honcho fosse
-aceito, iniciaria também seu setup seguro; nenhuma credencial entraria na conversa.
+A estrutura, instalação e verificações são trabalho do agente. O nome escolhido
+vale para a identidade; aplicação no nome visível do bot exige chamada real e
+resultado confirmado. Backup e conexões adicionais não são perguntas obrigatórias.

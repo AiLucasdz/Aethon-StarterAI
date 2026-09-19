@@ -39,8 +39,13 @@ verificações possíveis na instalação alvo e informe os limites restantes.
    o mesmo ambiente. Em caso de erro, informe a causa e corrija antes de anunciar
    instalação concluída. Não remova personalizações para contornar conflitos.
 6. Execute `python3 scripts/gateway_hook.py` e apresente a pergunta retornada
-   nesta conversa. Primeiro nome do agente, depois nome do dono. Para responder,
-   use `--responder CHAVE RESPOSTA` com argumentos separados/escapados; para pular,
+   nesta conversa. Primeiro nome do agente, depois a apresentação livre de `docs/onboarding.md`.
+   Verifique áudio/leitura de anexos conforme `docs/midia.md`. Aplique o nome
+   escolhido nos destinos configuráveis, incluindo o bot quando suportado,
+   sem perguntar de novo. Organize informações já recebidas; pergunte só o que
+   faltar para a tarefa. Para responder,
+   use `--responder CHAVE RESPOSTA` ou `--apresentacao-json ARQUIVO_PRIVADO`
+   para material organizado, com argumentos separados/escapados; para pular,
    `--pular CHAVE`. Não interpole o texto do usuário em comandos shell.
 7. Execute `python3 scripts/ativar-memoria.py --telegram-owner ID` no mesmo
    ambiente, com o ID numérico do remetente confirmado nesta conversa privada.

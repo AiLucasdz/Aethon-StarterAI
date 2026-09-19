@@ -76,8 +76,9 @@ orienta identificar o perfil correto, preservar configurações e verificar o re
 comandos; responde às perguntas necessárias e autentica suas contas quando preciso.
 
 1. Preparar os arquivos privados e as instruções do runtime.
-2. Perguntar primeiro o nome do agente, depois quem é o dono e suas preferências,
-   um item por vez. É possível pular perguntas e retomar depois.
+2. Perguntar o nome do agente e receber uma apresentação livre por áudio, texto,
+   PDF ou resumo de outra IA: rotina, dificuldades, preferências e ajuda desejada.
+   O agente organiza e pergunta só o que faltar; é possível pular e retomar depois.
 3. Instalar GBrain e o plugin de recuperação no perfil que atende a conversa.
 4. Se Honcho for aceito, iniciar o setup nativo na mesma instalação. Sem terminal
    interativo, informar autenticação pendente e o comando para continuar com segurança.

@@ -21,18 +21,10 @@ def main() -> int:
         print("ONBOARDING_CONCLUIDO")
         return 0
 
-    # Mensagem e resposta ao onboarding? (o agente passa via --responder)
-    args = sys.argv[1:]
-    if len(args) >= 2 and args[0] in {"--responder", "--pular"}:
-        r = subprocess.run(
-            [sys.executable, str(BASE_DIR / "scripts" / "onboarding.py"), *args],
-            capture_output=True, text=True)
-        print(r.stdout, end="")
-        return r.returncode
-
-    # Sem resposta: pedir a proxima pergunta
+    # Normaliza a mesma saída ao iniciar, responder, importar ou pular.
+    args = sys.argv[1:] or ['--iniciar']
     r = subprocess.run(
-        [sys.executable, str(BASE_DIR / "scripts" / "onboarding.py"), "--iniciar"],
+        [sys.executable, str(BASE_DIR / 'scripts/onboarding.py'), *args],
         capture_output=True, text=True)
     if r.returncode:
         print("ERRO: onboarding indisponível", file=sys.stderr)
