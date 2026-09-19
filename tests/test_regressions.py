@@ -79,7 +79,10 @@ class Regression(unittest.TestCase):
         (vault / '01_IDENTIDADE').symlink_to(elsewhere, target_is_directory=True)
         self.run_script('iniciar.py', ok=False)
         self.assertEqual(list(elsewhere.iterdir()), [])
-        (vault / '00_INBOX').symlink_to(elsewhere, target_is_directory=True)
+        capture_vault = self.root / 'capture-vault'
+        capture_vault.mkdir()
+        self.env['VAULT_PATH'] = str(capture_vault)
+        (capture_vault / '00_INBOX').symlink_to(elsewhere, target_is_directory=True)
         self.run_script('raw_capture.py', '--origem', 'teste', '--texto', 'fictício', ok=False)
         self.assertEqual(list(elsewhere.iterdir()), [])
 
