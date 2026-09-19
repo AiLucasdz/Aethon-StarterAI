@@ -1,5 +1,11 @@
 # Alterações
 
+## Não lançado — avaliação de transcrição local
+
+- Guia de mídia distingue modelo local e identificador de API, exige comparação
+  de precisão, latência e memória e não torna modelo maior padrão universal.
+- Teste sintético comprova execução, sem prometer precisão com voz natural.
+
 ## Não lançado — apresentação livre
 
 - Nome seguido de apresentação por texto, áudio ou documento, organizada pelo
