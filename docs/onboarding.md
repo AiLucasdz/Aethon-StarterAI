@@ -2,7 +2,9 @@
 
 Pré-requisitos: Hermes instalado, modelo configurado e bot pareado com o dono.
 A instalação é apresentada em vídeo pelo mantenedor (link ainda pendente).
-Execute `bash scripts/iniciar.sh` no terminal com HERMES_HOME e VAULT_PATH corretos.
+O agente executa `bash scripts/iniciar.sh` com HERMES_HOME e VAULT_PATH corretos,
+identificados por ele no servidor. O dono não precisa criar pastas nem executar
+comandos: envia o repositório e pede para iniciar.
 O inicializador prepara os templates e adiciona ao SOUL uma instrução para chamar
 `gateway_hook.py`. É uma instrução ao modelo, não um callback nativo garantido.
 A próxima sessão precisa carregar esse SOUL; uma simulação local não comprova

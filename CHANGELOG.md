@@ -1,5 +1,12 @@
 # Alterações
 
+## Não lançado — configuração executada pelo agente
+
+- Responsabilidade explícita por pastas, caminhos, arquivos, comandos e validação.
+  Perguntar apenas dados/decisões faltantes; não transferir a execução ao dono.
+- Skills após a configuração principal; bloqueio opcional não interrompe
+  identidade, onboarding ou memória. Guias de entrada alinhados ao pedido no Telegram.
+
 ## Não lançado — apresentação e diagramas
 
 - README orientado a empreendedores, empresários, profissionais e uso pessoal,

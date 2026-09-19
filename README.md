@@ -72,6 +72,9 @@ precisa conseguir ler o repositório e executar comandos no servidor. Um link
 sozinho não instala nada. O [guia do instalador](docs/instalar-pelo-telegram.md)
 orienta identificar o perfil correto, preservar configurações e verificar o resultado.
 
+**O agente executa esses passos.** Você não precisa escolher pastas nem colar
+comandos; responde às perguntas necessárias e autentica suas contas quando preciso.
+
 1. Preparar os arquivos privados e as instruções do runtime.
 2. Perguntar primeiro o nome do agente, depois quem é o dono e suas preferências,
    um item por vez. É possível pular perguntas e retomar depois.

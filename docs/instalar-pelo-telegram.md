@@ -5,6 +5,19 @@ configurar o agente ou instalar. Esses pedidos iniciam o mesmo fluxo. Não é
 necessário criar outro bot, trocar o modelo ou refazer o pareamento existente.
 O vídeo de VPS, instalação do Hermes e conexão ao Telegram será incluído depois.
 
+## Responsabilidade pela execução
+
+O agente instala e organiza: escolhe caminhos privados seguros, cria as pastas,
+preenche os arquivos, executa os comandos e verifica o resultado. Não peça ao
+dono para desenhar a estrutura, escolher nomes técnicos ou colar comandos no
+terminal quando você pode executá-los. Pergunte somente informações pessoais ou
+decisões que faltam; reutilize respostas explícitas já dadas. Autenticação pessoal
+ou uma exceção de segurança pode exigir participação, explicando o motivo.
+
+Não transforme pendências de uma skill opcional em bloqueio do onboarding ou da
+memória principal. Não peça ao dono para criar outra VPS para validar: faça as
+verificações possíveis na instalação alvo e informe os limites restantes.
+
 ## Instruções ao agente instalador
 
 1. Inspecione o repositório solicitado e suas instruções. Um link isolado não é
@@ -22,11 +35,7 @@ O vídeo de VPS, instalação do Hermes e conexão ao Telegram será incluído d
    ambiente. O comando cria apenas arquivos ausentes, prepara o onboarding e
    instala a base gerenciada com backup local dos arquivos migrados. Não instala
    serviços, não conecta contas e não altera a configuração do Hermes.
-5. Instale também as skills distribuídas conforme `docs/skills.md`, no mesmo
-   `HERMES_HOME`. Use o gerenciador nativo, preserve versões/personalizações
-   existentes e valide a descoberta pelo Hermes. Não carregue a skill inteira
-   no SOUL: ela é consultada sob demanda.
-   Confira o código de saída e execute `python3 scripts/migrar.py --status` com
+5. Confira o código de saída e execute `python3 scripts/migrar.py --status` com
    o mesmo ambiente. Em caso de erro, informe a causa e corrija antes de anunciar
    instalação concluída. Não remova personalizações para contornar conflitos.
 6. Execute `python3 scripts/gateway_hook.py` e apresente a pergunta retornada
@@ -44,7 +53,12 @@ O vídeo de VPS, instalação do Hermes e conexão ao Telegram será incluído d
    puladas. O estado em disco permite retomar depois; novas sessões carregam o
    SOUL atualizado. Não reinicie o gateway no meio da conversa só para atualizar
    instruções; nesta sessão siga o fluxo lido no repositório.
-9. Ao concluir, ofereça uso imediato ou configuração opcional. Agenda, Tasks e
+9. Com a configuração principal encaminhada, instale as skills de `docs/skills.md`
+   no mesmo perfil, pelo gerenciador nativo. Preserve versões existentes; valide
+   descoberta e requisitos. Se houver bloqueio, registre a pendência e explique
+   a revisão necessária, sem interromper o restante. A skill completa é carregada
+   sob demanda, não copiada para o SOUL.
+10. Ao concluir, ofereça uso imediato ou configuração opcional. Agenda, Tasks e
    YouTube são exemplos independentes. Novas automações também podem ser pedidas.
    Honcho é oferecido durante o onboarding: aceitação inicia o setup nativo
    seguro como etapa desta instalação. Após a resposta, execute novamente
