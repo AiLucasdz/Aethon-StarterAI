@@ -53,6 +53,8 @@ def main():
                  '<!-- /onboarding-aethon -->\n')
         soul.write_text(text)
     soul.chmod(0o600)
+    subprocess.run([sys.executable, str(BASE / 'scripts/migrar.py'), '--apply'],
+                   env=env, check=True)
     print('Templates preservados/criados; onboarding preparado no SOUL.')
     print('O gateway deve carregar este HERMES_HOME; novas sessões usam o SOUL atualizado.')
     print('Pareamento Telegram e configuração Hermes são pré-requisitos; não foram executados aqui.')
