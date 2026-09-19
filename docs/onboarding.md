@@ -2,10 +2,7 @@
 
 Pré-requisitos: Hermes instalado, modelo configurado e bot pareado com o dono.
 A instalação é apresentada em vídeo pelo mantenedor (link ainda pendente).
-O dono pode enviar este repositório ao agente já conectado e pedir a instalação;
-o agente segue `instalar-pelo-telegram.md`. Não é necessário pedir ao dono que
-execute scripts manualmente. Para instalação manual, execute
-`bash scripts/iniciar.sh` no terminal com HERMES_HOME e VAULT_PATH corretos.
+Execute `bash scripts/iniciar.sh` no terminal com HERMES_HOME e VAULT_PATH corretos.
 O inicializador prepara os templates e adiciona ao SOUL uma instrução para chamar
 `gateway_hook.py`. É uma instrução ao modelo, não um callback nativo garantido.
 A próxima sessão precisa carregar esse SOUL; uma simulação local não comprova

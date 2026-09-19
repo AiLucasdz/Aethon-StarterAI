@@ -15,10 +15,7 @@
 
 ## Depois do vídeo
 
-Link do vídeo ainda pendente. Com Hermes e bot já configurados, envie o link deste
-repositório ao agente no Telegram e peça a instalação. Ele deve seguir
-[instalar-pelo-telegram.md](instalar-pelo-telegram.md), executar os scripts e
-começar perguntando o nome escolhido. Como alternativa manual, execute
+Link do vídeo ainda pendente. Com Hermes e bot já configurados, execute
 `bash scripts/iniciar.sh` usando os caminhos privados da instalação. Veja
 [onboarding.md](onboarding.md) para carregamento do SOUL e limites da integração.
 O onboarding não coleta token GitHub; registra somente interesse em backup.

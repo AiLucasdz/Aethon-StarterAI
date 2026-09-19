@@ -4,11 +4,8 @@ KVM 1 é ponto inicial para modelo remoto por API; não há benchmark de instala
 completa desta versão em VPS limpa. Nenhum LLM é instalado localmente.
 
 - Conversas longas: `configurar_hermes.sh --perfil-leve` usa compactação nativa
-  com threshold_tokens=300000 e tail_mode=lean, e max_turns=25. Valores iniciais
+  com threshold_tokens=100000 e tail_mode=lean, e max_turns=25. Valores iniciais
   ajustáveis, não garantia de tempo de resposta. Exigem Hermes compatível.
-  O perfil só é aplicado quando solicitado; a instalação e as migrações não
-  sobrescrevem a configuração existente. O contexto efetivo depende do modelo
-  e do Hermes; esse valor não amplia a janela suportada pelo provedor.
 - Medir tokens por chamada, duração total do turno, número de ferramentas, RSS,
   erros e tempo de entrega. Cache reduz custo, mas não prova baixa latência.
 - STT local small pode ser lento em 1 vCPU: não é ligado automaticamente. Escolher
@@ -19,13 +16,3 @@ completa desta versão em VPS limpa. Nenhum LLM é instalado localmente.
 - Não desativar memória para resolver lentidão sem evidência. Compactação mantém
   o histórico persistido, mas o resumo precisa preservar decisões e referências.
 - Validação local de scripts não é teste de Telegram, OAuth ou modelo real.
-
-## Teste isolado com Hermes instalado
-
-Execute `python3 scripts/testar-runtime.py --hermes /caminho/para/hermes`.
-O script cria runtime fictício em diretório temporário, sem herdar credenciais,
-configura o perfil opcional, confere a leitura do threshold de 300 mil, executa
-backup/import nativos e compara os arquivos restaurados. `--manter` conserva esse
-ambiente para inspeção. Não chama modelos, conecta bot ou configura OAuth.
-Os tempos registrados são de comandos locais, não latência de conversa.
-O vault externo ao HERMES_HOME não entra no backup nativo testado.

@@ -1,25 +1,20 @@
-# Próxima versão — revisão após v0.2.1
+# Alterações em revisão após v0.2.1
 
-- Entrada pelo link do repositório no Telegram já conectado; o agente instala,
-  preserva a configuração existente e inicia as perguntas, uma de cada vez.
-- Onboarding retomável, sem pedir tokens, bloquear ajuda ou anunciar backup
-  inexistente. Nome do agente vem primeiro; todas as etapas podem ser puladas.
-- Conexões e automações opcionais, independentes e extensíveis. Registro privado
-  de escolhas não representa autenticação ou agendamento real.
-- Base operacional atualizável no SOUL, migração versionada com backup local,
-  reversão e detecção de conflitos; texto personalizado e módulos preservados.
-- Perfil de desempenho opt-in com max_turns=25, compactação de 300 mil tokens
-  e tail lean. Instalação e migração não aplicam esse perfil automaticamente.
-- Atualização Git por fast-forward com bundle verificado; forks divergentes
-  exigem revisão. O update.sh não migra runtime nem atualiza o Hermes.
-- Capturas com deduplicação por ID exato, escrita atômica e validação de datas.
-- Dados privados fora do checkout; rejeição de symlinks nos caminhos tratados.
+- Onboarding deixa de solicitar tokens pelo Telegram e não anuncia backup sem
+  sincronização/restauração implementadas. GitHub opcional registra intenção.
+- Perguntas respeitam ordem, fuso é validado, pular funciona pelo wrapper;
+  estado é gravado atomicamente com lock e acesso restrito.
+- Inicialização preserva arquivos existentes mesmo em vault parcial, recusa
+  caminhos dentro da base pública e prepara instrução no SOUL carregável.
+- Configuração Hermes usa comandos nativos; não concatena YAML nem muda
+  automaticamente modelo, aprovações ou STT. --yolo é escolha explícita.
+- Perfil leve opt-in usa max_turns=25 e compactação nativa em 100 mil tokens
+  com tail lean. Necessita benchmark em VPS limpa e versão compatível do Hermes.
+- Atualização realiza fetch/fast-forward, verifica backup Git, recusa alterações
+  locais/divergência. Migrações de runtime/personalização seguem pendentes.
+- Capturas usam ID exato por hash, lock e escrita atômica; data inválida recusada.
+- Documentação distingue mecanismos existentes, integrações planejadas e testes
+  locais. Memória, SOUL e histórico enviados ao modelo não são somente locais.
 
-Validação local: nove testes isolados passaram, incluindo atualização/reversão,
-interrupção e preservação de personalizações. Teste offline com Hermes instalado
-passou: instalação fictícia, leitura da configuração, backup/import do runtime e
-migração após restauração. Não comprova entrega Telegram, comportamento do modelo,
-OAuth, backup do vault externo ou desempenho em VPS KVM 1.
-
-Pendentes: vídeo, bot de teste real, adaptadores opcionais autenticados, backup
-integral/externo, revisão completa dos metadados do histórico e próxima release.
+Validação: testes unittest isolados e análise sintática. Sem teste real de bot,
+OAuth, instalação completa em VPS ou migração entre releases nesta revisão.

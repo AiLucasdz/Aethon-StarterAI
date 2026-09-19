@@ -1,55 +1,44 @@
+
 # Exemplo de onboarding — conversa fictícia
 
-> Dados inventados. Hermes e Telegram já estão conectados. A pessoa enviou
-> o link do repositório e pediu a instalação.
+> Exemplo com dados INVENTADOS para ilustrar o fluxo. Nada aqui é real.
 
-**Bot:** Preparei os arquivos privados. Como você quer me chamar?
+---
 
-**Pessoa:** Sábi.
+**Bot:** Oi! Sou seu agente pessoal, rodando no SEU servidor. Antes de tudo:
+como você quer me chamar?
 
-**Bot:** Prazer! E como você quer ser chamada?
+**Maria:** vou te chamar de Sábi
 
-**Pessoa:** Maria.
+**Bot:** Fechado, sou o Sábi 🚀 Agora me conta rapidinho sobre você — isso me
+ajuda a responder do jeito certo:
+1. Como você quer ser chamada?
+2. O que você faz? (trabalho/projeto principal)
+3. O que você mais quer que eu faça por você? (até 3 coisas)
+4. Tem algo que eu NUNCA devo fazer?
 
-**Bot:** O que você faz? (trabalho/projeto principal)
+**Maria:** Maria. Sou dentista e tenho uma clínica. Quero que você controle
+minha agenda, me lembre de Follow-ups de pacientes e resuma reuniões. Nunca
+mande mensagem para pacientes sem eu confirmar antes.
 
-**Maria:** Sou dentista.
+**Bot:** Anotado, Maria ✅
+- Agendei no meu perfil: você é dentista, foco em agenda + follow-ups +
+  resumos de reunião, e mensagem a paciente exige sua confirmação sempre.
 
-**Bot:** O que você mais quer que eu faça por você? (até 3 coisas)
+Como prefere minhas respostas — curtas e diretas, com contexto e explicação,
+ou tanto faz?
 
-**Maria:** Organizar tarefas e ajudar com reuniões.
-
-**Bot:** Tem algo que eu NUNCA devo fazer? (ou “pular”)
-
-**Maria:** Não envie mensagens a pacientes sem minha confirmação.
-
-**Bot:** Como prefere minhas respostas? Curtas e diretas, com contexto ou tanto faz?
-
-**Maria:** Curtas.
+**Maria:** curtas
 
 **Bot:** Em que fuso você está? (ex.: America/Sao_Paulo)
 
-**Maria:** America/Sao_Paulo.
+**Maria:** America/Sao_Paulo
 
-**Bot:** Você pode usar /setname no BotFather para dar esse mesmo nome ao bot.
-Feito? Responda “pronto” ou “pular” para fazer depois.
+**Bot:** Pronto, Sábi está no ar! 🚀 Posso conectar quando você quiser:
+📅 Agenda + Tasks · 📧 Gmail · 🎙️ Reuniões · 🎬 YouTube
+Quer ativar alguma agora, ou prefere "depois" e já me usar?
 
-**Maria:** Pular.
+**Maria:** agenda depois. agora quero testar
 
-**Bot:** Quer configurar backup privado depois? Responda “sim” ou “pular”.
-Não envie tokens aqui. A escolha não cria repositório nem ativa backup.
-
-**Maria:** Pular.
-
-**Bot:** Configuração inicial concluída. Conexões e automações são opcionais:
-agenda, tarefas, YouTube ou outras que você escolher. Nenhuma foi ativada aqui.
-Quer configurar alguma, criar outra automação ou prefere me usar já?
-
-**Maria:** Quero tarefas locais, sem Google. E depois um lembrete para regar plantas.
-
-**Bot:** Podemos organizar suas tarefas nos arquivos locais. Para o lembrete,
-qual frequência e horário você quer? Você pode continuar sem agenda ou YouTube.
-
-> A rotina só será anunciada como ativa depois de configurar e verificar o
-> agendamento e a entrega. Pedidos de outro assunto podem interromper o
-> questionário a qualquer momento, sem bloquear o uso do agente.
+**Bot:** Perfeito — sem conectar nada por enquanto. Já pode me pedir coisas.
+Quando quiser a agenda, é só dizer "conecta minha agenda".
