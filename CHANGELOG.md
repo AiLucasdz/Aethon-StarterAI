@@ -1,5 +1,24 @@
 # Alterações
 
+## Não lançado — segundo cérebro como função padrão
+
+- GBrain incluído na instalação: base privada sem chave, busca textual, importação
+  inicial e MCP nativo; novas dependências fixadas em GBrain v0.46.12.3,
+  integração existente preservada. Honcho oferecido no
+  onboarding com recusa permitida. Antigo estado segundo_cerebro compatível.
+- Hook de recuperação Hermes com perfil/DM restritos, limite de contexto, sem
+  LLM adicional e sem outro processo de banco. Captura semântica com origem,
+  decisões e lições específicas, recuperação e aplicação verificáveis.
+- SOUL gerenciado recebe caminhos absolutos e escolhas mesmo quando a identidade
+  anterior não tem placeholders; personalizações externas preservadas.
+- Corrigido bloqueio aninhado no registro de escolhas do onboarding.
+- Dezesseis testes isolados e fluxo com Hermes/GBrain reais aprovados: SOUL
+  preexistente, recuperação/injeção nativas, bloqueio de grupo, reativação
+  idempotente, rollback de config, backup e restauração do runtime. Sem chamadas
+  de modelo, Honcho remoto ou instalação completa pelo Telegram nesta validação.
+- Fluxo de instalação/atualização documenta ativação e prova no consumidor;
+  nenhum dado pessoal nem credencial acompanha a distribuição.
+
 ## v0.3.0 — Segundo cérebro (GBrain + Honcho)
 
 - GBrain (MIT, github:garrytan/gbrain) e Honcho como módulos disponíveis;

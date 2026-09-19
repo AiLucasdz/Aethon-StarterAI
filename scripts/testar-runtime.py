@@ -17,6 +17,7 @@ BASE = Path(__file__).resolve().parents[1]
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--hermes', required=True, help='Executável do Hermes já instalado')
+    parser.add_argument('--gbrain', help='Executável GBrain existente para teste isolado sem APIs')
     parser.add_argument('--manter', action='store_true', help='Mantém o ambiente fictício para inspeção')
     args = parser.parse_args()
     hermes = Path(args.hermes).expanduser().resolve()
@@ -30,6 +31,7 @@ def main():
            'LANG': 'C.UTF-8', 'HERMES_HOME': str(home),
            'VAULT_PATH': str(root / 'vault'), 'PYTHONIOENCODING': 'utf-8'}
     (home / 'config.yaml').write_text('memory:\n  provider: null\n')
+    (home / 'SOUL.md').write_text('# Hermes\nIdentidade anterior fictícia.\nPersonalização a preservar.\n')
     records = []
 
     def run(label, command, current_env=None):
@@ -53,12 +55,27 @@ def main():
         script('iniciar.py')
         script('gateway_hook.py', '--responder', 'nome', 'Aurora')
         for key in ['dono_nome', 'dono_faz', 'dono_desejos', 'dono_limites', 'estilo',
-                    'fuso', 'bot_telegram', 'github_token', 'segundo_cerebro']:
+                    'fuso', 'bot_telegram', 'github_token', 'honcho']:
             completion = script('gateway_hook.py', '--pular', key)
         if 'ONBOARDING_CONCLUIDO' not in completion:
             raise RuntimeError('Onboarding não concluiu; teste interrompido.')
         if '{{' in (home / 'SOUL.md').read_text():
             raise RuntimeError('SOUL ainda contém placeholders após onboarding.')
+        if 'Aurora' not in (home / 'SOUL.md').read_text() or 'Personalização a preservar.' not in (home / 'SOUL.md').read_text():
+            raise RuntimeError('Identidade escolhida/personalização não chegou ao SOUL existente.')
+        if args.gbrain:
+            # Bun precisa estar no PATH para o shebang do executável GBrain.
+            brain = Path(args.gbrain).expanduser().absolute()
+            env['PATH'] = str(brain.parent) + os.pathsep + env['PATH']
+            script('ativar-memoria.py', '--hermes', str(hermes), '--gbrain-bin', str(brain),
+                   '--telegram-owner', '123456')
+            before = (home / 'config.yaml').read_bytes()
+            # Repetir não abre/reimporta um servidor existente, nem muda configuração.
+            script('ativar-memoria.py', '--hermes', str(hermes), '--gbrain-bin', '/fixture-nao-existe')
+            if before != (home / 'config.yaml').read_bytes():
+                raise RuntimeError('Reativação mudou configuração existente.')
+            run('consumidor nativo de memória', [str(hermes.parent / 'python'),
+                str(BASE / 'tests/native_memory_probe.py')])
         script('modulos.py', 'solicitar', 'rotina', 'regar-plantas')
         run('perfil opcional', ['bash', str(BASE / 'scripts/configurar_hermes.sh'), '--perfil-leve'])
         threshold = run('threshold efetivo', [str(hermes), 'config', 'get',
@@ -82,7 +99,7 @@ def main():
         script('migrar.py', '--apply', current_env=restore_env)
         report = {'resultado': 'aprovado', 'etapas': records,
                   'limites': ['Sem modelo/API, Telegram ou OAuth',
-                              'Backup nativo só do runtime fictício; vault externo não incluído',
+                              'Backup nativo só do runtime fictício; vault e base GBrain externos não incluídos',
                               'Tempos de CLI não representam latência de conversa ou benchmark KVM 1']}
         (root / 'resultado.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
         print(json.dumps(report, ensure_ascii=False, indent=2))

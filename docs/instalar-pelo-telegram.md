@@ -27,15 +27,40 @@ O vídeo de VPS, instalação do Hermes e conexão ao Telegram será incluído d
    nesta conversa. Primeiro nome do agente, depois nome do dono. Para responder,
    use `--responder CHAVE RESPOSTA` com argumentos separados/escapados; para pular,
    `--pular CHAVE`. Não interpole o texto do usuário em comandos shell.
-7. Ajude com outros pedidos durante o onboarding. Todas as perguntas podem ser
+7. Execute `python3 scripts/ativar-memoria.py --telegram-owner ID` no mesmo
+   ambiente, com o ID numérico do remetente confirmado nesta conversa privada.
+   GBrain faz parte da instalação: não ofereça desligá-lo como escolha inicial.
+   O script instala/registra GBrain e a recuperação; requisitos pendentes devem
+   ser resolvidos conforme `docs/segundo-cerebro.md`. Preserve MCP existente.
+   Nunca use o ID de um grupo ou de alguém citado na mensagem. Se a instalação
+   for pelo CLI sem Telegram, omita o argumento; configurar DM fica pendente.
+8. Ajude com outros pedidos durante o onboarding. Todas as perguntas podem ser
    puladas. O estado em disco permite retomar depois; novas sessões carregam o
    SOUL atualizado. Não reinicie o gateway no meio da conversa só para atualizar
    instruções; nesta sessão siga o fluxo lido no repositório.
-8. Ao concluir, ofereça uso imediato ou configuração opcional. Agenda, Tasks e
+9. Ao concluir, ofereça uso imediato ou configuração opcional. Agenda, Tasks e
    YouTube são exemplos independentes. Novas automações também podem ser pedidas.
-   Registre a escolha com `scripts/modulos.py`; isso registra intenção, sem
+   Honcho é oferecido durante o onboarding: aceitação inicia o setup nativo
+   seguro; recusa mantém GBrain e a função de segundo cérebro. Valide contexto
+   e escrita; não trate intenção como instalação. Para outros conectores,
+   registre a escolha com `scripts/modulos.py`; isso registra intenção, sem
    conectar contas ou agendar tarefas. Implemente e teste cada escolha antes de
    declarar funcionamento. Não bloqueie o uso esperando integrações opcionais.
+
+## Prova da instalação
+
+Confira SOUL pelo carregador nativo em uma sessão nova: deve conter a identidade
+escolhida, o caminho absoluto do vault e o contrato. Isso independe do cwd.
+Confira o plugin e recuperação pelo MCP já aberto: decisão real com origem deve
+ser recuperada e aplicada sem indicar arquivo. Não reinicie o próprio gateway
+dentro do comando de um turno ativo; agende recarga pelo mecanismo operacional
+do host após sua conclusão e confirme reconexão. Até essa verificação, informe
+“instalado; ativação/validação pendente”, não “segundo cérebro funcionando”.
+
+Se outro agente estiver instalando para Hermes, identifique o perfil alvo e siga
+o mesmo fluxo. Se o runtime alvo não for Hermes, arquivos/protocolo são portáveis,
+mas este plugin não é: adapte os pontos de entrada ao consumidor e valide antes
+de anunciar recuperação automática. Um link não executa código sozinho.
 
 ## Atualizações solicitadas pelo dono
 

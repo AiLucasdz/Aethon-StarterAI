@@ -1,134 +1,85 @@
-# Segundo cérebro: GBrain + Honcho
+# Segundo cérebro: instalação padrão
 
-O template pode operar como segundo cérebro em quatro camadas complementares:
+O agente já é um segundo cérebro. Vault, memória nativa disponível e GBrain fazem
+parte do fluxo; só Honcho pode ser recusado no onboarding. Falta de requisito
+significa configuração pendente, não uma versão alternativa do agente.
 
-| Camada | O que guarda | Onde vive |
-|---|---|---|
-| Vault Markdown | Registros duráveis (decisões, diário, pessoas) | Seu servidor, em Markdown |
-| Memória nativa MEMORY/USER | Notas compactas e estáveis | Recurso do Hermes |
-| GBrain | Conhecimento com relações, busca semântica e síntese com fontes | Seu servidor (PGLite local) + API de embeddings |
-| Honcho | Contexto conversacional e representação do dono ao longo das sessões | Serviço Honcho (nuvem) |
+| Camada | Responsabilidade |
+|---|---|
+| Markdown | Fonte durável: perfil, projetos, decisões e lições com origem |
+| MEMORY/USER nativas | Mapa e convenções curtas / perfil estável, via ferramenta do Hermes |
+| GBrain | Recuperação com fontes; índice não substitui a autoridade do Markdown |
+| Honcho | Continuidade conversacional adicional; conclusões são revisáveis |
 
-Nenhuma é ligada por padrão. Conectar não ativa rotinas. Custo: embeddings e
-planos externos são cobrados — cada serviço apresenta preço antes da escolha.
+## GBrain incluído
 
-## Honcho (contexto conversacional)
+Após `iniciar.py`, execute `ativar-memoria.py` com o mesmo `HERMES_HOME` e
+`VAULT_PATH`, informando `--telegram-owner ID` quando houver Telegram. O script:
 
-O Hermes já traz Honcho como provedor de memória nativo. Para ativar:
+1. Confirma o perfil pelo CLI Hermes; guarda backup privado da configuração.
+2. Preserva um MCP `gbrain` já configurado, sem abrir sua base em outro processo.
+3. Se não existir MCP, usa GBrain instalado ou instala `github:garrytan/gbrain#v0.46.12.3` (versão validada nesta revisão)
+   pelo Bun. O pacote homônimo do npm não deve ser usado. Se Bun faltar, instale
+   pelo [guia oficial](https://bun.sh/docs/installation) e retome.
+4. Cria base isolada em `<HERMES_HOME>-gbrain/.gbrain` (diretório irmão do runtime), com PGLite, sem embeddings,
+   modo conservative, e importa o vault sem chamadas de embedding.
+5. Registra MCP com a superfície `verbs` e habilita `aethon-memory` via comandos
+   nativos. Não troca modelo, compressão, contas, aprovações ou cron.
 
-1. Crie conta em https://app.honcho.dev e gere sua API key.
-2. Grave a chave fora do repositório:
-   `hermes memory setup honcho` (fluxo nativo, disponível antes de ativar o
-   provedor; mantém credenciais na configuração privada do Hermes).
-3. Dê um peer ao seu usuário (como o agente deve chamar você na memória):
-   `hermes honcho peer --user <nome>`.
-   Em instalação existente, confira `hermes honcho peers` e preserve a identidade
-   que já possui o histórico. Identidades do Telegram e CLI podem ser distintas;
-   não una usuários ou agentes de trabalho automaticamente.
-4. Verifique `hermes honcho status`: o peer deve estar definido e a leitura de
-   seus dados deve funcionar. A saída final `OK` sozinha não basta: algumas
-   versões também imprimem `Peer data unavailable` antes dela. Abra uma nova
-   sessão e confira a inicialização e recuperação de contexto sem esse erro.
+A opção inicial sem chave permite instalar a memória sem pedir credenciais no
+chat. Começa com busca textual, não busca semântica. Quando houver credencial
+adequada do dono, configure embeddings nativamente e valide custo/recuperação;
+reutilize configuração existente sem reindexar ou mudar modelo por conta própria.
+Referência: [GBrain oficial](https://github.com/garrytan/gbrain), que orienta começar
+sem chave e acrescentar busca semântica quando necessária. As versões mudam:
+confira compatibilidade com `init --no-embedding`, `serve --surface verbs` e o
+contrato `remember/recall` antes de atualizar uma instalação.
 
-Referência: [documentação oficial do Hermes](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/honcho.md).
+A base GBrain fica fora do runtime: arquivos internos do PGLite podem ter datas
+incompatíveis com o ZIP nativo do Hermes, além de exigir cópia consistente.
+O backup Hermes não cobre essa base nem o vault externo. Use exportação/snapshot
+próprio com a base parada e teste restauração antes de prometer backup completo.
+Não copie um PGLite aberto nem crie outro processo para fazer o backup.
 
-Sem chave, a memória nativa local (MEMORY/USER) segue funcionando.
+### Validar no consumidor
 
-## GBrain (conhecimento, relações e síntese)
+Recarregue o gateway fora do turno ativo. No próximo turno, verifique ferramentas,
+texto recuperado e origem. Use uma decisão real do onboarding para testar captura:
+registre no Markdown, `remember` com entidade/tipo/proveniência e `recall` pelo MCP.
+Repita a captura consultando primeiro entidade/texto/origem e reaproveite o ID
+existente: sem embeddings a escrita pode não deduplicar sozinha. Em sessão nova, pergunte sem
+indicar o arquivo e confira aplicação na resposta. Não simule fatos do dono.
 
-GBrain é open source (MIT, github.com/garrytan/gbrain), roda local em PGLite e
-precisa de Bun e de uma API key de embeddings.
+Não rode `gbrain import`, `doctor`, outro servidor ou `hermes mcp test` contra o
+mesmo PGLite enquanto o gateway o utiliza. Para manutenção, drene e pare o
+consumidor, execute os comandos e reinicie; em conversa ativa use o MCP já aberto.
+`hermes mcp test` só é adequado quando não há outro processo usando essa base.
+Não declarar sucesso pelo código de saída/ID sem inspecionar resposta.
 
-### Instalação
+`private` pode gravar e não voltar pelo MCP: nas versões com leitura remota
+restrita a `world`, esse escopo permite acesso aos consumidores da mesma base.
+Não torna dados públicos na internet. Confira isolamento antes de usá-lo; não
+promova registros anteriores em lote. Ver [contrato de memória](../agent/memoria.md).
 
-```bash
-# 1. Bun (runtime necessário)
-curl -fsSL https://bun.sh/install | bash
-export PATH="$HOME/.bun/bin:$PATH"
+## Honcho oferecido no onboarding
 
-# 2. GBrain — SEMPRE do GitHub. O pacote 'gbrain' do npm é OUTRO projeto.
-bun install -g github:garrytan/gbrain
-gbrain --version   # deve imprimir uma versão
-```
+O onboarding pergunta se pode configurar Honcho, explica serviço externo/custo
+sem pedir chave e aceita recusa. Com aceitação, o agente deve executar o setup,
+não apenas anotar intenção. Se já houver configuração, validar e preservar.
 
-### Chave de embeddings
+1. Use `hermes memory setup honcho` no terminal seguro para credenciais do dono.
+   Sem interação segura disponível, explique o único passo externo necessário e
+   retome após concluído; nunca peça chave pelo Telegram.
+2. Confira peers existentes. Use `hermes honcho peer --user <identidade>` para
+   definir a identidade CLI apropriada. Preserve o histórico e o isolamento de
+   Telegram/CLI/outros agentes; não crie peer vazio para mascarar um erro.
+3. Confira provider efetivo, flags de memória nativa e modo de observação.
+   Não troque um provedor existente silenciosamente nem altere relações entre peers.
+4. `hermes honcho status` precisa retornar dados, não só `OK`. Um aviso como
+   `Peer data unavailable` é falha. Verifique contexto no consumidor em nova sessão
+   e novas gravações separadamente. Não misture acesso com qualidade das conclusões.
 
-A stack padrão usa Voyage (`voyage-4` + rerank; uma chave cobre os dois).
-OpenAI é alternativa. Sem chave nenhuma, a busca por palavra-chave continua
-funcionando — só sem busca semântica.
-
-```bash
-export VOYAGE_API_KEY=pa-...   # ou OPENAI_API_KEY=sk-...
-```
-
-Guarde a chave no shell profile ou em `~/.gbrain/config.json` (arquivo), nunca
-em mensagens de chat e nunca no repositório.
-
-### Criação do cérebro e modo de busca
-
-```bash
-gbrain init          # cria o cérebro em PGLite, sem servidor
-gbrain doctor --json # todos os checks devem passar
-```
-
-O `gbrain init` aplica um modo de busca automático (tokenmax). O custo por
-consulta varia até 25x entre modos — escolha consciente, não aceite o padrão em
-silêncio. Valores de referência do guia oficial (10 mil consultas/mês):
-
-| Modo | Haiku-class ($1/M) | Sonnet-class ($3/M) | Opus-class ($5/M) |
-|---|---|---|---|
-| conservative | $40/mês | $120/mês | $200/mês |
-| balanced | $100/mês | $300/mês | $500/mês |
-| tokenmax | $200/mês | $600/mês | $1.000/mês |
-
-- `conservative` — 4K de contexto, sem expansão LLM, 10 chunks. Volume alto/custo baixo.
-- `balanced` — 12K, sem expansão, 25 chunks. Equilíbrio comum.
-- `tokenmax` — sem limite, expansão LLM ligada, 50 chunks. Modelos frontier.
-
-Para trocar: `gbrain config set search.mode <modo>` e confirme com
-`gbrain search modes`. O instalador deve apresentar esta matriz e perguntar
-antes de prosseguir — não aceitar o padrão em silêncio.
-
-### Registro no Hermes (MCP)
-
-```bash
-printf 'Y\n' | hermes mcp add gbrain --env GBRAIN_HOME=$HOME \
-  --connect-timeout 60 --command $(which gbrain) --args serve
-hermes mcp test gbrain   # verificação real; o add sozinho não prova conexão
-```
-
-Reinicie o gateway depois de registrar. A partir daí o agente ganha os verbos
-`gbrain remember / recall / query` — captura com entidade e tipo, recuperação
-com fontes.
-
-### Primeira indexação
-
-```bash
-gbrain import "$VAULT_PATH" --no-embed   # importa o vault em Markdown
-gbrain embed --stale                     # gera embeddings
-gbrain stats                             # confere páginas e links
-```
-
-## O que NÃO esperar
-
-- Nenhuma sincronização automática entre as camadas: o vault não indexa o
-  GBrain sozinho, o Honcho não lê o vault. A captura que alimenta cada camada
-  é comportamento do agente, definido nas instruções dele.
-- Dados locais não saem do servidor exceto pelos serviços que você conectar
-  (modelo, embeddings, Honcho). Revise `docs/privacidade.md`.
-- O onboarding pergunta se você quer cada camada; pular não deixa a instalação
-  incompleta — o agente funciona com vault + memória nativa.
-
-## Checklist do instalador (agente)
-
-Ao pedir GBrain/Honcho para o dono, execute e verifique cada passo antes de
-declarar ligado:
-
-- [ ] Bun instalado (`bun --version`)
-- [ ] `gbrain --version` responde (instalação via github:garrytan/gbrain)
-- [ ] Chave de embeddings gravada em arquivo, não em chat
-- [ ] `gbrain init` + `gbrain doctor --json` sem falhas
-- [ ] Modo de busca escolhido pelo dono após ver a matriz de custo
-- [ ] `hermes mcp test gbrain` conectado + gateway reiniciado
-- [ ] `hermes honcho status` conectado + peer do usuário definido
-- [ ] `gbrain stats` mostra o vault importado
+Sem Honcho, o segundo cérebro continua com GBrain, vault e memória nativa.
+Não há sincronização contínua entre camadas nem garantia de captura espontânea:
+a execução segue o contrato e precisa ser observada no uso real. Não são
+ativadas rotinas de enriquecimento ou chamadas de síntese por padrão.

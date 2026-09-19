@@ -23,7 +23,7 @@ class Lifecycle(unittest.TestCase):
 
     def run_script(self, name, *args, ok=True):
         result = subprocess.run(['python3', str(self.checkout / 'scripts' / name), *args],
-                                env=self.env, capture_output=True, text=True)
+                                env=self.env, capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode == 0, ok, result.stdout + result.stderr)
         return result
 
@@ -54,7 +54,7 @@ class Lifecycle(unittest.TestCase):
         self.run_script('gateway_hook.py', '--responder', 'nome', 'Aurora')
         self.assertIn('dono_nome', self.run_script('gateway_hook.py').stdout)
         for key in ['dono_nome', 'dono_faz', 'dono_desejos', 'dono_limites', 'estilo',
-                    'fuso', 'bot_telegram', 'github_token', 'segundo_cerebro']:
+                    'fuso', 'bot_telegram', 'github_token', 'honcho']:
             result = self.run_script('gateway_hook.py', '--pular', key)
         self.assertIn('ONBOARDING_CONCLUIDO', result.stdout)
         self.assertIn('Aurora', soul.read_text())
@@ -96,6 +96,66 @@ class Lifecycle(unittest.TestCase):
         modules.write_text('{"schema":999}')
         self.run_script('modulos.py', 'solicitar', 'rotina', 'teste', ok=False)
         self.assertEqual(modules.read_text(), '{"schema":999}')
+
+    def test_existing_identity_and_honcho_refusal_keep_gbrain(self):
+        self.home.mkdir()
+        (self.home / 'SOUL.md').write_text('# Hermes\nPreferência fictícia preservada.\n')
+        self.run_script('iniciar.py')
+        self.run_script('gateway_hook.py', '--responder', 'nome', 'Aurora')
+        for key in ['dono_nome', 'dono_faz', 'dono_desejos', 'dono_limites', 'estilo',
+                    'fuso', 'bot_telegram', 'github_token', 'honcho']:
+            self.run_script('gateway_hook.py', '--pular', key)
+        soul = (self.home / 'SOUL.md').read_text()
+        self.assertIn('Aurora', soul)
+        self.assertIn('Preferência fictícia preservada.', soul)
+        self.assertIn(str(self.root / 'vault' / 'AGENTS.md'), soul)
+        modules = json.loads((self.home / 'state/modulos.json').read_text())
+        self.assertEqual(modules['conexoes']['gbrain']['desejado'], 'solicitado')
+        self.assertEqual(modules['conexoes']['honcho']['desejado'], 'desativado')
+
+    def test_honcho_acceptance_does_not_deadlock_and_old_state_resumes(self):
+        self.run_script('iniciar.py')
+        state = self.home / 'state/onboarding.json'
+        state.write_text(json.dumps({k: '(pulado)' for k in ['nome', 'dono_nome',
+            'dono_faz', 'dono_desejos', 'dono_limites', 'estilo', 'fuso', 'bot_telegram', 'github_token']}))
+        self.run_script('gateway_hook.py', '--responder', 'honcho', 'sim')
+        modules = json.loads((self.home / 'state/modulos.json').read_text())
+        self.assertEqual(modules['conexoes']['honcho']['desejado'], 'solicitado')
+        old = json.loads(state.read_text())
+        old['segundo_cerebro'] = old.pop('honcho')
+        state.write_text(json.dumps(old))
+        self.assertIn('ONBOARDING_CONCLUIDO', self.run_script('gateway_hook.py').stdout)
+
+    def test_plugin_activation_failure_restores_config_and_preserves_existing_mcp(self):
+        self.run_script('iniciar.py')
+        config = self.home / 'config.yaml'
+        before = b'custom: preserve\n'
+        config.write_bytes(before)
+        fake = self.root / 'hermes-fixture'
+        fake.write_text('''#!/usr/bin/env python3
+import json, os, sys
+from pathlib import Path
+p = Path(os.environ['HERMES_HOME']) / 'config.yaml'
+args = sys.argv[1:]
+if args == ['config', 'path']:
+    print(p)
+elif args == ['config', 'get', 'mcp_servers', '--json']:
+    print(json.dumps({'gbrain': {'command': 'existing-server', 'enabled': True}}))
+elif args[:2] == ['config', 'set']:
+    assert args[2] != 'mcp_servers.gbrain', 'Não substituir servidor existente'
+    p.write_text(p.read_text() + '# alteração parcial fictícia\\n')
+elif args[:2] == ['plugins', 'enable']:
+    raise SystemExit(1)
+else:
+    raise SystemExit(2)
+''')
+        fake.chmod(0o700)
+        self.run_script('ativar-memoria.py', '--hermes', str(fake), '--gbrain-bin', '/nao-existe', ok=False)
+        self.assertEqual(config.read_bytes(), before)
+        self.assertFalse((self.home / 'plugins/aethon-memory').is_symlink())
+        backups = list((self.home / 'state/aethon-memory').glob('config-*.yaml'))
+        self.assertEqual(backups[0].read_bytes(), before)
+        self.assertEqual(backups[0].stat().st_mode & 0o777, 0o600)
 
     def test_interrupted_migration_recovery(self):
         self.run_script('iniciar.py')

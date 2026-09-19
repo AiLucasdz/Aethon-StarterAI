@@ -16,7 +16,7 @@ class Regression(unittest.TestCase):
         self.env = dict(os.environ, HERMES_HOME=str(self.root/'runtime'), VAULT_PATH=str(self.root/'vault'))
 
     def run_script(self, name, *args, ok=True):
-        r = subprocess.run(['python3', str(BASE/'scripts'/name), *args], env=self.env, capture_output=True, text=True)
+        r = subprocess.run(['python3', str(BASE/'scripts'/name), *args], env=self.env, capture_output=True, text=True, timeout=30)
         if ok:
             self.assertEqual(r.returncode, 0, r.stderr+r.stdout)
         else:
@@ -41,7 +41,7 @@ class Regression(unittest.TestCase):
         self.run_script('gateway_hook.py','--pular','bot_telegram')
         self.run_script('gateway_hook.py','--responder','github_token','ghp_'+'x'*30,ok=False)
         r=self.run_script('gateway_hook.py','--responder','github_token','sim')
-        self.run_script('gateway_hook.py','--pular','segundo_cerebro')
+        self.run_script('gateway_hook.py','--pular','honcho')
         r=self.run_script('gateway_hook.py')
         self.assertIn('ONBOARDING_CONCLUIDO',r.stdout)
         self.assertIn('não configurado',r.stdout)

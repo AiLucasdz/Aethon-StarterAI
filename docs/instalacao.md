@@ -16,7 +16,10 @@
 ## Depois do vídeo
 
 Link do vídeo ainda pendente. Com Hermes e bot já configurados, execute
-`bash scripts/iniciar.sh` usando os caminhos privados da instalação. Veja
+`bash scripts/iniciar.sh` usando os caminhos privados da instalação, seguido de
+`python3 scripts/ativar-memoria.py --telegram-owner ID_DO_DONO` para GBrain e
+recuperação. Pelo Telegram, peça ao agente para seguir
+[instalar-pelo-telegram.md](instalar-pelo-telegram.md). Veja
 [onboarding.md](onboarding.md) para carregamento do SOUL e limites da integração.
 O onboarding não coleta token GitHub; registra somente interesse em backup.
 

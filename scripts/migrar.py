@@ -80,8 +80,24 @@ def apply():
         raise ValueError('Bloco gerenciado removido localmente; revise antes de migrar.')
     command = shlex.join(['env', f'HERMES_HOME={root}', sys.executable,
                          str(BASE / 'scripts/modulos.py')])
-    body = (BASE / 'agent/base-operacional.md').read_text().replace('{{COMANDO_MODULOS}}',
-                                                                 f'`{command}`')
+    vault = safe(os.environ.get('VAULT_PATH', version.get('vault', str(Path.home() / 'vault'))))
+    body = (BASE / 'agent/base-operacional.md').read_text()
+    for key, value in {
+        '{{COMANDO_MODULOS}}': f'`{command}`', '{{VAULT_PATH}}': str(vault),
+        '{{VAULT_AGENTS}}': str(vault / 'AGENTS.md'),
+        '{{MEMORY_RULES}}': str(BASE / 'agent/memoria.md'),
+        '{{BRAIN_GUIDE}}': str(BASE / 'docs/segundo-cerebro.md'),
+    }.items():
+        body = body.replace(key, value)
+    onboarding = read(root / 'state/onboarding.json', {})
+    fields = {k: onboarding[k] for k in ('nome', 'dono_nome', 'dono_faz', 'dono_desejos',
+              'dono_limites', 'estilo', 'fuso') if onboarding.get(k) not in (None, '', '(pulado)')}
+    if fields:
+        body += ('\n## Escolhas do onboarding\n\n'
+                 'Dados informados pelo dono: nome e estilo escolhidos substituem padrões '
+                 'anteriores do agente; preserve demais personalizações e limites. '
+                 'Campos ausentes não revogam escolhas anteriores.\n'
+                 + json.dumps(fields, ensure_ascii=False).replace('<', '\\u003c') + '\n')
     block = START + '\n' + body.rstrip() + '\n' + END
     new_text = text.replace(old_block, block) if old_block else text + '\n' + block + '\n'
     modules = json.loads(before['state/modulos.json'] or
@@ -91,7 +107,7 @@ def apply():
     after = {
         'SOUL.md': new_text.encode(),
         'state/modulos.json': before['state/modulos.json'] or encoded(modules),
-        'state/aethon-version.json': encoded({'schema': 1, 'managed_sha256': digest(block.encode())}),
+        'state/aethon-version.json': encoded({'schema': 1, 'managed_sha256': digest(block.encode()), 'vault': str(vault)}),
     }
     if before == after:
         print('Base privada já atualizada; personalizações preservadas.')

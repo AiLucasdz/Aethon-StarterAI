@@ -25,8 +25,14 @@ real de usuário pertence aqui.
 Leia `docs/instalar-pelo-telegram.md` e execute o fluxo autorizado de instalação.
 Hermes, modelo e Telegram já estão funcionando nesse cenário. Preserve a
 configuração existente. Comece pelo nome do agente, depois pelo dono. Todos os
-conectores e automações são opcionais, independentes e extensíveis; os exemplos
+conectores externos e automações são independentes e extensíveis; GBrain é parte
+da instalação, Honcho é oferecido com possibilidade de recusa. Os exemplos
 do catálogo não limitam o que a pessoa pode pedir.
+
+Tudo criado prioriza desempenho, otimização e custo: mecanismos nativos,
+contexto limitado, nenhuma camada ou instrução redundante; preservar legibilidade
+em vez de reduzir linhas artificialmente. Nunca anunciar instalação validada
+sem carregar instruções e recuperar memória pelo consumidor alvo.
 
 ## Diretórios
 

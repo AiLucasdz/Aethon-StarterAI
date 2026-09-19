@@ -1,0 +1,5 @@
+name: aethon-memory
+version: "0.1.0"
+description: "Consulta fontes do vault e GBrain opcional pelo cliente nativo."
+hooks:
+  - pre_llm_call

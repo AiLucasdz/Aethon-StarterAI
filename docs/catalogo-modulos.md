@@ -9,8 +9,8 @@ embeddings e chamadas ao modelo podem ser cobrados.
 | Vault Markdown | Estrutura criada sem sobrescrever arquivos existentes |
 | Onboarding | Script local + instrução no SOUL; validação Telegram real pendente |
 | Memória nativa MEMORY/USER | Recurso do Hermes; conferir configuração efetiva |
-| Honcho | Disponível ([docs/segundo-cerebro.md](segundo-cerebro.md)); requer conta e chave próprias; desligado por padrão |
-| GBrain | Disponível ([docs/segundo-cerebro.md](segundo-cerebro.md)); MIT público, instala local; requer Bun + chave de embeddings; desligado por padrão |
+| Honcho | Disponível ([docs/segundo-cerebro.md](segundo-cerebro.md)); oferecido no onboarding, pode ser recusado; requer setup e conta próprios |
+| GBrain | Disponível ([docs/segundo-cerebro.md](segundo-cerebro.md)); parte da instalação; requer Bun, começa sem chave com busca textual; embeddings configuráveis |
 | Agenda/Tasks/Gmail | Planejado/opcional; fluxo OAuth documentado ([docs/conectores.md](conectores.md)) |
 | YouTube | Planejado/opcional; leitura pública e gestão de canal documentadas ([docs/conectores.md](conectores.md)) |
 | Fathom | Planejado/opcional; conexão documentada ([docs/conectores.md](conectores.md)); sem cron/timer instalado |

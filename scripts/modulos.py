@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Escolhas privadas e extensíveis. Não conecta contas nem instala cron jobs."""
 import argparse
+from contextlib import nullcontext
 import json
 import re
 from private_state import home, locked, read, write
@@ -36,18 +37,15 @@ if __name__ == '__main__':
     main()
 
 
-def registrar_intencao(st: dict) -> None:
-    """Registra a intenção do segundo cérebro no estado de módulos.
-
-    Não instala nada: só marca 'solicitado' para gbrain e honcho, seguindo o
-    mesmo contrato de conexões — o agente implementa e verifica cada camada
-    depois, com as credenciais do dono.
-    """
+def registrar_intencao(st: dict, *, already_locked=False) -> None:
+    """GBrain faz parte da instalação; Honcho depende da escolha do dono."""
     path = home() / 'state' / 'modulos.json'
-    with locked():
+    with nullcontext() if already_locked else locked():
         state = read(path, {'schema': 1, 'conexoes': {}, 'rotinas': {}})
         if state.get('schema') != 1:
             raise ValueError('Versão de estado não suportada; atualize a base.')
-        for mod in ('gbrain', 'honcho'):
-            state['conexoes'].setdefault(mod, {'desejado': 'solicitado'})
+        state['conexoes'].setdefault('gbrain', {'desejado': 'solicitado'})
+        if st.get('honcho'):
+            state['conexoes'].setdefault('honcho', {
+                'desejado': 'solicitado' if st['honcho'] == 'solicitado' else 'desativado'})
         write(path, state)

@@ -64,7 +64,10 @@ def main(argv=None):
     soul.chmod(0o600)
     subprocess.run([sys.executable, str(BASE / 'scripts/migrar.py'), '--apply'],
                    env=env, check=True)
+    from modulos import registrar_intencao
+    registrar_intencao({})
     print('Templates preservados/criados; onboarding preparado no SOUL.')
+    print('Instalação ainda requer ativar-memoria.py: GBrain é parte do agente; Honcho é oferecido no onboarding.')
     print('O gateway deve carregar este HERMES_HOME; novas sessões usam o SOUL atualizado.')
     print('Pareamento Telegram e configuração Hermes são pré-requisitos; não foram executados aqui.')
 

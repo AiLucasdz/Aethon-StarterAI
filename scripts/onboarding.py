@@ -51,21 +51,23 @@ GITHUB_MSG = (
     "fluxo seguro do GitHub. Esta escolha não cria repositório nem ativa backup."
 )
 
-# Segundo cérebro: GBrain + Honcho, ambos opcionais e desligados por padrão.
+# Segundo cérebro é a função do agente; apenas Honcho admite recusa.
 BRAIN_MSG = (
-    "Quer que eu funcione como segundo cérebro completo (GBrain + Honcho)?\n"
-    "GBrain: conhecimento com relações e busca com fontes, roda no seu servidor "
-    "(precisa de Bun e de uma chave de embeddings, com custo próprio).\n"
-    "Honcho: contexto conversacional entre sessões (conta própria em app.honcho.dev).\n"
-    "Responda 'sim' ou 'pular'. Nada é instalado por esta resposta; a instalação "
-    "é feita passo a passo depois, com verificação. Sem isso, eu funciono com "
-    "vault + memória nativa. Guia: docs/segundo-cerebro.md"
+    "Seu agente é um segundo cérebro: arquivos, memória nativa e GBrain fazem parte da instalação.\n"
+    "Vou configurar também o Honcho para continuidade entre conversas? Ele usa uma "
+    "conta própria e processa contexto no serviço; pode ter custo. Responda 'sim' "
+    "para configurar com segurança ou 'pular' para recusar. Não envie chaves aqui. "
+    "Isso não desativa o GBrain nem muda a função do agente."
 )
 
 
 def carregar_estado() -> dict:
     if STATE.exists():
-        return json.loads(STATE.read_text())
+        state = json.loads(STATE.read_text())
+        # Estado v0.3: a resposta antiga vira apenas a escolha do Honcho.
+        if 'segundo_cerebro' in state and 'honcho' not in state:
+            state['honcho'] = state['segundo_cerebro']
+        return state
     return {}
 
 
@@ -93,8 +95,8 @@ def proxima_pendente(st: dict):
                 BOT_MSG.replace("{nome}", st.get("nome", "assistente")))
     if "github_token" not in st:
         return "github_token", GITHUB_MSG
-    if "segundo_cerebro" not in st:
-        return "segundo_cerebro", BRAIN_MSG
+    if "honcho" not in st:
+        return "honcho", BRAIN_MSG
     return None, None
 
 
@@ -154,6 +156,12 @@ def preencher_artefatos(st: dict) -> None:
         perfil.write_text(texto)
         perfil.chmod(0o600)
 
+    # Projeta escolhas mesmo quando o SOUL preexistente não tem placeholders.
+    from migrar import apply
+    import contextlib, io
+    with contextlib.redirect_stdout(io.StringIO()):
+        apply()
+
 
 def main() -> int:
     p = argparse.ArgumentParser()
@@ -183,11 +191,13 @@ def main() -> int:
             print(f"ERRO:só é possível pular a pergunta atual ({prox})")
             return 1
         salvar_estado(st)
+        from modulos import registrar_intencao
+        registrar_intencao(st, already_locked=True)
 
     elif args.responder:
         chave, resposta = args.responder
         chaves_validas = {c for c, _ in PERGUNTAS} | {"github_token", "bot_telegram",
-                                                      "segundo_cerebro"}
+                                                      "honcho"}
         if chave not in chaves_validas:
             print(f"chave invalida: {chave}")
             return 1
@@ -202,15 +212,14 @@ def main() -> int:
                 print("ERRO: use sim ou pular. Não envie credenciais.")
                 return 1
             st[chave] = "solicitado" if answer in {"sim", "yes"} else "(pulado)"
-        elif chave == "segundo_cerebro":
+        elif chave == "honcho":
             answer = resposta.strip().lower()
             if answer not in PULAR | {"sim", "yes"}:
                 print("ERRO: use sim ou pular.")
                 return 1
             st[chave] = "solicitado" if answer in {"sim", "yes"} else "(pulado)"
-            if st[chave] == "solicitado":
-                from modulos import registrar_intencao
-                registrar_intencao(st)
+            from modulos import registrar_intencao
+            registrar_intencao(st, already_locked=True)
         else:
             if chave == "fuso" and resposta.strip().lower() not in PULAR:
                 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -230,7 +239,7 @@ def main() -> int:
             salvar_estado(st)
         backup = "não configurado (solicitação anotada)" if st.get("github_token") == "solicitado" else "não configurado"
         print("ONBOARDING_CONCLUIDO")
-        print(f"Pronto, {st['nome']} está no ar! 🚀")
+        print("Identidade configurada. Segundo cérebro é a função padrão; confira a instalação do GBrain e a recuperação antes de anunciar pronto.")
         print(f"Backup do vault: {backup}")
         print("Conexões e automações são opcionais: agenda, tarefas, YouTube ou outras que você escolher.")
         print("Cada uma depende de configuração e teste; nenhuma foi ativada aqui.")

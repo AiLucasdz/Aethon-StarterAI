@@ -22,3 +22,14 @@ versão e não anuncia backup como concluído. Token antigo salvo na instalaçã
 
 Depois, a pessoa escolhe conexões e, separadamente, rotinas. Módulos ainda sem
 adaptador não podem ser anunciados como ativos. Ver catalogo-modulos.md.
+
+## Memória incluída e complemento opcional
+
+Depois de nome e dados do dono, o agente já é um segundo cérebro com GBrain,
+vault e memória nativa disponível. Não perguntar se a pessoa quer essa função.
+A pergunta `honcho` oferece continuidade conversacional externa: sim inicia setup
+seguro, pular recusa apenas Honcho. Estados antigos de `segundo_cerebro` são lidos
+como escolha de Honcho, sem descartar respostas anteriores.
+
+Concluir perguntas não comprova instalação. `ativar-memoria.py` instala GBrain e
+o hook; valide nova sessão, captura/recuperação pelo MCP e identidade no SOUL.
